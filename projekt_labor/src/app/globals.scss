@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-primary text-secondary min-h-screen;
+  }
+
+  main {
+    > div {
+      @apply container mx-auto my-32;
+
+      &:last-child {
+        @apply mb-0;
+      }
+    }
+  }
+}
+
+@layer components {
+  nav {
+    ul {
+      li {
+        @apply px-10;
+
+        a {
+          @apply hover:bg-primary hover:text-secondary transition rounded p-1 font-bold;
+        }
+      }
+    }
+  }
+}

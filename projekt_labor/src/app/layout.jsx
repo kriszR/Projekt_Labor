@@ -1,5 +1,4 @@
-import localFont from "next/font/local";
-import "./globals.css";
+import "./globals.scss";
 
 export const metadata = {
   title: "Create Next App",
