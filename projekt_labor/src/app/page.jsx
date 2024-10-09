@@ -2,14 +2,13 @@ import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import { Calendar } from "@/components/ui/calendar";
 import { PrismaClient } from "@prisma/client";
+import { Product } from "@/components/Product"
 
 const prisma = new PrismaClient();
 
 
 export default async function Home() {
-  const users = await prisma.users.findMany();
-  console.log(prisma)
-  console.log(users)
+  const products = await prisma.products.findMany();
 
   return (
     <>
@@ -17,13 +16,9 @@ export default async function Home() {
       <main>
         <SearchBar />
         <div>
-          {users.map((user, index) => 
+          {products.map((product, index) => 
             (
-              <div key={index}>
-                <h3>
-                  {user.username}
-                </h3>
-              </div>
+              <Product key={index} product={product} />
             )
           )}
         </div>
