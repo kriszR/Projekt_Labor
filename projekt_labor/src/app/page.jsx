@@ -1,18 +1,33 @@
-"use client";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
+import { PrismaClient } from "@prisma/client";
 
-export default function Home() {
-  const [date, setDate] = useState(new Date());
+const prisma = new PrismaClient();
+
+
+export default async function Home() {
+  const users = await prisma.users.findMany();
+  console.log(prisma)
+  console.log(users)
 
   return (
     <>
       <Header />
       <main>
         <SearchBar />
-        <Calendar mode="single" selected={date} onSelect={(time)=> console.log(time)} />
+        <div>
+          {users.map((user, index) => 
+            (
+              <div key={index}>
+                <h3>
+                  {user.username}
+                </h3>
+              </div>
+            )
+          )}
+        </div>
+        <Calendar mode="single" />
       </main>
     </>
   );
