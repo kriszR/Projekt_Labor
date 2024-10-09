@@ -12,7 +12,7 @@ export default function Home() {
       <Header />
       <main>
         <SearchBar />
-        <Calendar mode="single" selected={date} onSelect={setDate} />
+        <Calendar mode="single" selected={date} onSelect={(time)=> console.log(time)} />
       </main>
     </>
   );
