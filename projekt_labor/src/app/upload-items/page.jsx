@@ -16,7 +16,6 @@ import Alert from "@/components/Alert";
 
 async function UploadProduct(name, category, description, setAlert) {
   try {
-    console.log(name, category, description);
     if (!name || !category || !description)
       throw Error("Please fill out all fields!");
 
@@ -30,7 +29,7 @@ async function UploadProduct(name, category, description, setAlert) {
 
     if (!request.ok) throw Error("Couldn't add item, try again!");
 
-    setAlert({ message: "Item successfully added!", type: "succes" });
+    setAlert({ message: "Item successfully added!", type: "success" });
   } catch (err) {
     setAlert({ message: err.message, type: "error" });
   }

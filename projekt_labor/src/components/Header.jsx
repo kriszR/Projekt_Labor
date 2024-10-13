@@ -1,33 +1,27 @@
-'use client'
-import CartSVG from "@/images/cart.svg";
-import Image from "next/image";
-
+"use client";
+import Link from "next/link";
+import CartSVG from "@/images/CartSVG";
 
 export default function Header() {
-
-
   return (
-    <header className="bg-secondary text-primary">
+    <header className="bg-secondary text-primary sticky top-0">
       <nav className="container mx-auto flex justify-between min-h-[100px] items-center">
-        <Image src={CartSVG} alt="Cart" className="w-20" />
+        <Link href={"/"}>
+          <CartSVG
+            className={
+              "w-20 fill-slate-200 hover:fill-primary transition"
+            }
+          />
+        </Link>
+
         <ul className="flex">
           <li>
-            <a href="#">Home</a>
+            <Link href={"/"}>Home</Link>
           </li>
           <li>
-            <a href="#">Nav Menu1</a>
-          </li>
-          <li>
-            <a href="#">Nav Menu2</a>
-          </li>
-          <li>
-            <a href="#">Nav Menu3</a>
-          </li>
-          <li>
-            <a href="/upload-items">Upload Items</a>
+            <Link href={"/upload-items"}>Upload Items</Link>
           </li>
         </ul>
-
       </nav>
     </header>
   );
