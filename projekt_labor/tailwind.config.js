@@ -10,11 +10,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-			DEFAULT: "#2b3038",
-			hover: "#788bab"
-		},
+          DEFAULT: "#2b3038",
+          hover: "#788bab",
+        },
         secondary: "#7aadff",
       },
+      spacing: {
+        '1/2': '50%'
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
