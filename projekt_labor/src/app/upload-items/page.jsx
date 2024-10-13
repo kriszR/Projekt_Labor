@@ -14,24 +14,33 @@ import {
 } from "@/components/ui/select";
 import Alert from "@/components/Alert";
 
-async function UploadProduct(name, categ, desc) {
+async function UploadProduct(name, category, description, setAlert) {
   try {
-    if (!name && !categ && !desc) throw Error("Please fill out all fields!");
+    console.log(name, category, description);
+    if (!name || !category || !description)
+      throw Error("Please fill out all fields!");
 
     const request = await fetch("http://localhost:3000/api/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, category: categ, description: desc }),
+      body: JSON.stringify({ name, category, description }),
     });
-  } catch (err) {}
+
+    if (!request.ok) throw Error("Couldn't add item, try again!");
+
+    setAlert({ message: "Item successfully added!", type: "succes" });
+  } catch (err) {
+    setAlert({ message: err.message, type: "error" });
+  }
 }
 
 export default function UploadPage() {
   const [name, setName] = useState();
-  const [desc, setDesc] = useState();
-  //const [name, setName] = useState()
+  const [category, setCategory] = useState();
+  const [description, setDescription] = useState();
+  const [alert, setAlert] = useState({ message: "", type: "" });
 
   return (
     <main>
@@ -44,7 +53,8 @@ export default function UploadPage() {
           onChange={(e) => setName(e.target.value)}
         />
 
-        <Select className="w-full">
+        <Label htmlFor="category">Category</Label>
+        <Select className="w-full" onValueChange={setCategory} id="category">
           <SelectTrigger>
             <SelectValue placeholder="Select a timezone" />
           </SelectTrigger>
@@ -113,14 +123,16 @@ export default function UploadPage() {
           type="input"
           id="desc"
           placeholder="Description"
-          onChange={(e) => setDesc(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
         />
         <Button
           className="justify-self-center"
-          onClick={() => UploadProduct(name, "", desc)}
+          onClick={() => UploadProduct(name, category, description, setAlert)}
         >
           Upload Item
         </Button>
+
+        {alert.message && <Alert type={alert.type} message={alert.message} />}
       </div>
     </main>
   );
