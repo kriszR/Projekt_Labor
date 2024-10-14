@@ -10,7 +10,7 @@
 
 @layer base {
   body {
-    @apply bg-primary text-secondary min-h-screen;
+    @apply min-h-screen bg-primary text-secondary;
   }
 
   main {
@@ -31,11 +31,9 @@
         @apply px-10;
 
         a {
-          @apply hover:bg-primary hover:text-secondary transition rounded p-1 font-bold;
+          @apply rounded p-1 font-bold transition hover:bg-primary hover:text-secondary;
         }
       }
     }
   }
 }
-
-

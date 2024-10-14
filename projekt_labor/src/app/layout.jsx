@@ -1,9 +1,9 @@
-import "./globals.scss";
-import Header from "@/components/Header";
+import './globals.scss';
+import Header from '@/components/Header';
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={`antialiased`}>
         <>
           <Header />
