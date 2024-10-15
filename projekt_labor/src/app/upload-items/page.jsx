@@ -37,7 +37,7 @@ async function UploadProduct(
       },
       body: JSON.stringify({ name, category, description, price, store }),
     });
-    console.log(request);
+
     if (!request.ok) throw Error("Couldn't add item, try again!");
 
     setAlert({ message: 'Item successfully added!', type: 'success' });
