@@ -3,38 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search');
-
-    let products;
-    if (search) {
-      products = await prisma.products.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
-              category: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
-              description: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
-      });
-    } else {
-      products = await prisma.products.findMany();
-    }
+     const products = await prisma.shoppingListItems.findMany();
 
     return NextResponse.json(products);
   } catch (err) {

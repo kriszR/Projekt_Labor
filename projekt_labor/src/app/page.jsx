@@ -1,13 +1,11 @@
-import SearchBar from '@/components/SearchBar';
-import ProductsContainer from '@/components/ProductsContainer';
-import { Calendar } from '@/components/ui/calendar';
+import SearchProducts from '@/components/SearchProducts';
+import ShoppingList from '@/components/ShoppingList';
 
-export default async function Home() {
+export default function Home() {
   return (
     <main>
-      <SearchBar />
-      <ProductsContainer />
-      <Calendar mode='single' />
+      <SearchProducts />
+      <ShoppingList />
     </main>
   );
 }
