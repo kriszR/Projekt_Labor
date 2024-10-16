@@ -50,17 +50,17 @@ export default function SearchProducts() {
 
     const delayDebounceFn = setTimeout(() => {
       searchProducts(setProducts, searchTerm, setAlert, setLoading);
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, setProducts]);
 
   return (
     <>
-      <div className='flex justify-center gap-x-5'>
+      <div className='flex justify-center'>
         <Input
           type='text'
-          className='w-1/3 rounded text-2xl'
+          className='w-1/3 text-2xl'
           placeholder='Search for some bread by typing'
           onChange={(e) => setSearchTerm(e.target.value)}
         ></Input>

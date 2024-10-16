@@ -10,7 +10,7 @@
 
 @layer base {
   body {
-    @apply min-h-screen bg-primary text-secondary;
+    @apply min-h-[200vh] bg-primary text-secondary;
   }
 
   main {
@@ -31,8 +31,23 @@
         @apply px-10;
 
         a {
-          @apply rounded p-1 font-bold transition hover:bg-primary hover:text-secondary;
+          @apply rounded p-1 font-bold transition;
+
+          &.active-link,
+          &:hover {
+            @apply bg-primary text-secondary;
+          }
         }
+      }
+    }
+  }
+
+  .shopping-list {
+    @apply relative z-10 w-full;
+    
+    ul {
+      li {
+        @apply border-b-2 border-b-black;
       }
     }
   }
