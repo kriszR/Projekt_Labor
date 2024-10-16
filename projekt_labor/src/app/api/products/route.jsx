@@ -31,9 +31,16 @@ export async function GET(request) {
             },
           ],
         },
+        include: {
+          prices: true,
+        },
       });
     } else {
-      products = await prisma.products.findMany();
+      products = await prisma.products.findMany({
+        include: {
+          prices: true,
+        },
+      });
     }
 
     return NextResponse.json(products);

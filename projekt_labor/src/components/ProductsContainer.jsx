@@ -12,6 +12,15 @@ export default function ProductsContainer({ products }) {
                 name={product.name}
                 category={product.category}
                 description={product.description}
+                price={
+                  product.prices.length > 0 ? product.prices[0].price+' Ft' : 'N/A'
+                }
+                currency={
+                  product.prices.length > 0 ? product.prices[0].currency : 'N/A'
+                }
+                store={
+                  product.prices.length > 0 ? product.prices[0].store : 'N/A'
+                }
               />
             ))}
           </div>
@@ -20,4 +29,3 @@ export default function ProductsContainer({ products }) {
     </>
   );
 }
-
