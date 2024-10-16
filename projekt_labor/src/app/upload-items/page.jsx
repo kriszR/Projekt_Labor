@@ -57,6 +57,8 @@ export default function UploadPage() {
   const [date, setDate] = useState('');
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+  const [showInputStore, setShowInputStore] = useState(false);
 
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -70,6 +72,94 @@ export default function UploadPage() {
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
   }, [alert]);
+
+  const handleCategoryChange = (value) => {
+    if (value === 'other') {
+      setShowInput(true);
+    } else {
+      setCategory(value);
+      setShowInput(false);
+    }
+  };
+
+  const handleStoreChange = (value) => {
+    if (value === 'other') {
+      setShowInputStore(true);
+    } else {
+      setStore(value);
+      setShowInputStore(false);
+    }
+  };
+
+  const [categories, setCategories] = useState([
+    'Water',
+    'White Bread',
+    'Milk',
+  ]);
+  const [newCategory, setNewCategory] = useState('');
+
+  const [stores, setStores] = useState(['Aldi', 'Lidl', 'Tesco']);
+  const [newStore, setNewStore] = useState('');
+
+  
+   useEffect(() => {
+    const savedCategories = localStorage.getItem('categories');
+    const savedStores = localStorage.getItem('stores');
+
+    if (savedCategories) setCategories(JSON.parse(savedCategories));
+    if (savedStores) setStores(JSON.parse(savedStores));
+  }, []);
+
+
+  /*const addCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories([...categories, newCategory]);
+      setCategory(newCategory);
+      setNewCategory('');
+      setShowInput(false);
+    } else {
+      alert('The category already exists!');
+    }
+  };*/
+
+  const addCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      const updatedCategories = [...categories, newCategory];
+      setCategories(updatedCategories);
+      setCategory(newCategory);
+      setNewCategory('');
+      setShowInput(false);
+      localStorage.setItem('categories', JSON.stringify(updatedCategories));
+    } else {
+      alert('The category already exists!');
+    }
+  };
+
+
+  /*const addStore = () => {
+    if (newStore && !stores.includes(newStore)) {
+      setStores([...stores, newStore]);
+      setStore(newStore); 
+      setNewStore('');
+      setShowInputStore(false);
+    } else {
+      alert('The store already exists!');
+    }
+  };*/
+
+
+  const addStore = () => {
+    if (newStore && !stores.includes(newStore)) {
+      const updatedStores = [...stores, newStore];
+      setStores(updatedStores);
+      setStore(newStore);
+      setNewStore('');
+      setShowInputStore(false);
+      localStorage.setItem('stores', JSON.stringify(updatedStores));
+    } else {
+      alert('The store already exists!');
+    }
+  };
 
   return (
     <main>
@@ -86,7 +176,7 @@ export default function UploadPage() {
         <Label htmlFor='category'>Category *</Label>
         <Select
           className='w-full'
-          onValueChange={setCategory}
+          onValueChange={handleCategoryChange}
           value={category}
           id='category'
         >
@@ -95,16 +185,29 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>North America</SelectLabel>
-              <SelectItem value='est'>Eastern Standard Time (EST)</SelectItem>
-              <SelectItem value='cst'>Central Standard Time (CST)</SelectItem>
-              <SelectItem value='mst'>Mountain Standard Time (MST)</SelectItem>
-              <SelectItem value='pst'>Pacific Standard Time (PST)</SelectItem>
-              <SelectItem value='akst'>Alaska Standard Time (AKST)</SelectItem>
-              <SelectItem value='hst'>Hawaii Standard Time (HST)</SelectItem>
+            <SelectItem value='other'>Other</SelectItem>
+              {categories.map((category, index) => (
+                <SelectItem key={index} value={category}>
+                  {category}{' '}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
+
+        {showInput && (
+          <div>
+            <Input
+              type='text'
+              placeholder='Please add a new category'
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <Button onClick={addCategory} className='mt-2'>
+              Add
+            </Button>
+          </div>
+        )}
 
         <Label htmlFor='description'>Description</Label>
         <Input
@@ -144,7 +247,7 @@ export default function UploadPage() {
         <Label htmlFor='store'>Store *</Label>
         <Select
           className='w-full'
-          onValueChange={setStore}
+          onValueChange={handleStoreChange}
           value={store}
           id='store'
         >
@@ -153,16 +256,29 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>North America</SelectLabel>
-              <SelectItem value='est'>Eastern Standard Time (EST)</SelectItem>
-              <SelectItem value='cst'>Central Standard Time (CST)</SelectItem>
-              <SelectItem value='mst'>Mountain Standard Time (MST)</SelectItem>
-              <SelectItem value='pst'>Pacific Standard Time (PST)</SelectItem>
-              <SelectItem value='akst'>Alaska Standard Time (AKST)</SelectItem>
-              <SelectItem value='hst'>Hawaii Standard Time (HST)</SelectItem>
+            <SelectItem value='other'>Other</SelectItem>
+              {stores.map((stores, index) => (
+                <SelectItem key={index} value={stores}>
+                  {stores}{' '}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
+
+        {showInputStore && (
+          <div>
+            <Input
+              type='text'
+              placeholder='Please add a new store'
+              value={newStore}
+              onChange={(e) => setNewStore(e.target.value)}
+            />
+            <Button onClick={addStore} className='mt-2'>
+              Add
+            </Button>
+          </div>
+        )}
 
         <Button
           className='justify-self-center'

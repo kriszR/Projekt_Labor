@@ -11,7 +11,7 @@ export default function Header() {
   };
 
   return (
-    <header className='sticky top-0 bg-secondary text-primary'>
+    <header className='sticky top-0 bg-secondary text-primary z-50'>
       <nav className='container mx-auto flex min-h-[100px] items-center justify-between'>
         <Link href={'/'}>
           <CartSVG
