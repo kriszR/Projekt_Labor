@@ -1,6 +1,6 @@
-'use client';
 import Link from 'next/link';
 import CartSVG from '@/images/CartSVG';
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default function Header() {
   return (
@@ -20,6 +20,13 @@ export default function Header() {
             <Link href={'/upload-items'}>Upload Items</Link>
           </li>
         </ul>
+        <LoginLink >
+                            Sign in
+                            </LoginLink>
+                            <RegisterLink>
+                            Get started
+
+                            </RegisterLink>
       </nav>
     </header>
   );
