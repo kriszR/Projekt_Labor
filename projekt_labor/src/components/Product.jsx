@@ -7,7 +7,7 @@ export default function Product({ name, category, description, price, store }) {
       <div className='relative h-full rounded bg-white p-2'>
         <h2>Name: {name}</h2>
         <p>Category: {category}</p>
-        <p>Description: {description}</p>
+        <p>{description}</p>
         <p>Price: {price}</p>
         <p>Store: {store}</p>
         <Button className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'>

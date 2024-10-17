@@ -11,9 +11,15 @@ export default function ProductsContainer({ products }) {
                 key={index}
                 name={product.name}
                 category={product.category}
-                description={product.description}
+                description={
+                  product.description?.length > 0
+                    ? 'Description: ' + product.description
+                    : ''
+                }
                 price={
-                  product.prices.length > 0 ? product.prices[0].price+' Ft' : 'N/A'
+                  product.prices.length > 0
+                    ? product.prices[0].price + ' Ft'
+                    : 'N/A'
                 }
                 currency={
                   product.prices.length > 0 ? product.prices[0].currency : 'N/A'

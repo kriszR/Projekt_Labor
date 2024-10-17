@@ -185,12 +185,13 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-            <SelectItem value='other'>Other</SelectItem>
+            
               {categories.map((category, index) => (
                 <SelectItem key={index} value={category}>
                   {category}{' '}
                 </SelectItem>
               ))}
+              <SelectItem value='other'>Other</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -256,12 +257,13 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-            <SelectItem value='other'>Other</SelectItem>
+            
               {stores.map((stores, index) => (
                 <SelectItem key={index} value={stores}>
                   {stores}{' '}
                 </SelectItem>
               ))}
+              <SelectItem value='other'>Other</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
