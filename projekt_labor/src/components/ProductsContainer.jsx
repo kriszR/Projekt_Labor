@@ -10,7 +10,6 @@ export default function ProductsContainer({ products }) {
               <Product
                 key={index}
                 name={product.name}
-                category={product.category}
                 description={
                   product.description?.length > 0
                     ? 'Description: ' + product.description

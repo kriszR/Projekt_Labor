@@ -17,7 +17,7 @@ import Loading from '@/components/Loading';
 
 async function UploadProduct(
   name,
-  category,
+  date,
   description,
   price,
   store,
@@ -25,9 +25,12 @@ async function UploadProduct(
   setLoading
 ) {
   try {
+    console.log(date);
     setLoading(true);
 
-    if (!name || !category || !price || !store)
+    const longDate = new Date(date).toISOString();
+    
+    if (!name || !price || !store)
       throw Error('Please fill out all the required fields!');
 
     const request = await fetch('http://localhost:3000/api/products', {
@@ -35,7 +38,7 @@ async function UploadProduct(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, category, description, price, store }),
+      body: JSON.stringify({ name, longDate, description, price, store }),
     });
 
     if (!request.ok) throw Error("Couldn't add item, try again!");
@@ -46,41 +49,30 @@ async function UploadProduct(
   } finally {
     setLoading(false);
   }
+  
 }
 
 export default function UploadPage() {
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
   const [description, setDescription] = useState();
   const [price, setPrice] = useState(0);
   const [store, setStore] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
-  const [showInput, setShowInput] = useState(false);
   const [showInputStore, setShowInputStore] = useState(false);
-
-  const currentDate = new Date().toISOString().split('T')[0];
+  const [stores, setStores] = useState(['Aldi', 'Lidl', 'Tesco']);
+  const [newStore, setNewStore] = useState('');
 
   useEffect(() => {
     if (alert.type === 'success') {
       setName('');
-      setCategory('');
       setDescription('');
       setPrice(0);
       setStore('');
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
   }, [alert]);
-
-  const handleCategoryChange = (value) => {
-    if (value === 'other') {
-      setShowInput(true);
-    } else {
-      setCategory(value);
-      setShowInput(false);
-    }
-  };
 
   const handleStoreChange = (value) => {
     if (value === 'other') {
@@ -91,62 +83,11 @@ export default function UploadPage() {
     }
   };
 
-  const [categories, setCategories] = useState([
-    'Water',
-    'White Bread',
-    'Milk',
-  ]);
-  const [newCategory, setNewCategory] = useState('');
-
-  const [stores, setStores] = useState(['Aldi', 'Lidl', 'Tesco']);
-  const [newStore, setNewStore] = useState('');
-
-  
-   useEffect(() => {
-    const savedCategories = localStorage.getItem('categories');
+  useEffect(() => {
     const savedStores = localStorage.getItem('stores');
 
-    if (savedCategories) setCategories(JSON.parse(savedCategories));
     if (savedStores) setStores(JSON.parse(savedStores));
   }, []);
-
-
-  /*const addCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
-      setCategory(newCategory);
-      setNewCategory('');
-      setShowInput(false);
-    } else {
-      alert('The category already exists!');
-    }
-  };*/
-
-  const addCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      const updatedCategories = [...categories, newCategory];
-      setCategories(updatedCategories);
-      setCategory(newCategory);
-      setNewCategory('');
-      setShowInput(false);
-      localStorage.setItem('categories', JSON.stringify(updatedCategories));
-    } else {
-      alert('The category already exists!');
-    }
-  };
-
-
-  /*const addStore = () => {
-    if (newStore && !stores.includes(newStore)) {
-      setStores([...stores, newStore]);
-      setStore(newStore); 
-      setNewStore('');
-      setShowInputStore(false);
-    } else {
-      alert('The store already exists!');
-    }
-  };*/
-
 
   const addStore = () => {
     if (newStore && !stores.includes(newStore)) {
@@ -172,43 +113,6 @@ export default function UploadPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-
-        <Label htmlFor='category'>Category *</Label>
-        <Select
-          className='w-full'
-          onValueChange={handleCategoryChange}
-          value={category}
-          id='category'
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Select Category' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-            
-              {categories.map((category, index) => (
-                <SelectItem key={index} value={category}>
-                  {category}{' '}
-                </SelectItem>
-              ))}
-              <SelectItem value='other'>Other</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {showInput && (
-          <div>
-            <Input
-              type='text'
-              placeholder='Please add a new category'
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            />
-            <Button onClick={addCategory} className='mt-2'>
-              Add
-            </Button>
-          </div>
-        )}
 
         <Label htmlFor='description'>Description</Label>
         <Input
@@ -240,8 +144,8 @@ export default function UploadPage() {
           className='w-fit'
           id='date'
           min={'2000-01-01'}
-          max={currentDate}
-          value={date || currentDate}
+          max={new Date().toISOString().split('T')[0]}
+          value={date}
           onChange={(e) => setDate(e.target.value)}
         />
 
@@ -257,7 +161,6 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-            
               {stores.map((stores, index) => (
                 <SelectItem key={index} value={stores}>
                   {stores}{' '}
@@ -285,15 +188,7 @@ export default function UploadPage() {
         <Button
           className='justify-self-center'
           onClick={() =>
-            UploadProduct(
-              name,
-              category,
-              description,
-              price,
-              store,
-              setAlert,
-              setLoading
-            )
+            UploadProduct(name, date, description, price, store, setAlert, setLoading)
           }
         >
           Upload Item

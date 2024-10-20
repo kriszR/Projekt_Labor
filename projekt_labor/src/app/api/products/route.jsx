@@ -18,12 +18,6 @@ export async function GET(request) {
               },
             },
             {
-              category: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
               description: {
                 contains: search,
                 mode: 'insensitive',
@@ -56,7 +50,7 @@ export async function POST(request) {
 
     const productData = {
       name: json.name,
-      category: json.category,
+      date: json.longDate,
       description: json.description,
     };
 
