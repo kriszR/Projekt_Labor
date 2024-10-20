@@ -18,7 +18,7 @@ export async function POST(request) {
 
     const productData = {
       name: json.name,
-      category: json.category,
+      date: json.date,
       description: json.description,
     };
 

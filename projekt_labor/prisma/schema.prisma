@@ -22,8 +22,8 @@
   model Products {
     id                Int                 @id @default(autoincrement())
     name              String?             @db.VarChar
-    category          String?             @db.VarChar
     description       String?             @db.VarChar
+    date            DateTime?
     prices            Prices[]
     shoppinglistitems ShoppingListItems[]
   }
@@ -52,5 +52,10 @@
     password      String?         @db.VarChar
     prices        Prices[]
     shoppinglists ShoppingLists[]
+  }
+
+    model Shops {
+    id            Int             @id @default(autoincrement())
+    name          String?         @db.VarChar
   }
 

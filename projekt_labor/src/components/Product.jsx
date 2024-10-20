@@ -1,12 +1,11 @@
 import { Button } from './ui/button';
 import { Plus } from 'lucide-react';
 
-export default function Product({ name, category, description, price, store }) {
+export default function Product({ name, description, price, store }) {
   return (
     <div className='w-full px-1 md:w-1/2 lg:w-1/4'>
       <div className='relative h-full rounded bg-white p-2'>
         <h2>Name: {name}</h2>
-        <p>Category: {category}</p>
         <p>{description}</p>
         <p>Price: {price}</p>
         <p>Store: {store}</p>
