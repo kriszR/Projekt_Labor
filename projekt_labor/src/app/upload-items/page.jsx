@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -25,13 +24,12 @@ async function UploadProduct(
   setLoading
 ) {
   try {
-    console.log(date);
     setLoading(true);
-
-    const longDate = new Date(date).toISOString();
     
     if (!name || !price || !store)
       throw Error('Please fill out all the required fields!');
+    
+    const longDate = new Date(date).toISOString();
 
     const request = await fetch('http://localhost:3000/api/products', {
       method: 'POST',

@@ -61,8 +61,7 @@ export async function POST(request) {
     const priceData = {
       product_id: product.id,
       price: json.price,
-      currency: 'HUF',
-      store: json.store,
+      currency: 'HUF'
     };
 
     const price = await prisma.prices.create({
@@ -74,3 +73,5 @@ export async function POST(request) {
     throw Error(e.message);
   }
 }
+
+

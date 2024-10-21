@@ -24,7 +24,7 @@ async function searchProducts(setProducts, searchTerm, setAlert, setLoading) {
     const products = await response.json();
 
     if (!products.length) throw Error('No Products were found!');
-    
+
     setProducts(products);
 
     setAlert({ message: '', type: '' });
@@ -36,7 +36,7 @@ async function searchProducts(setProducts, searchTerm, setAlert, setLoading) {
   }
 }
 
-export default function SearchProducts() {
+export default function SearchProducts({ setUpdateShoppingList }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
@@ -66,10 +66,10 @@ export default function SearchProducts() {
         ></Input>
       </div>
       <div>
-        {(loading && <Loading />) ||
+        {(loading && <Loading message={'Loading, please wait'} />) ||
           (alert.message && (
             <Alert type={alert.type} message={alert.message} />
-          )) || <ProductsContainer products={products} />}
+          )) || <ProductsContainer products={products} setUpdateShoppingList={setUpdateShoppingList} />}
       </div>
     </>
   );

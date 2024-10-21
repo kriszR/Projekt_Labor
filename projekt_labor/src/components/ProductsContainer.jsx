@@ -1,6 +1,6 @@
 import Product from './Product';
 
-export default function ProductsContainer({ products }) {
+export default function ProductsContainer({ products, setUpdateShoppingList }) {
   return (
     <>
       {products.length > 0 && (
@@ -9,6 +9,7 @@ export default function ProductsContainer({ products }) {
             {products.map((product, index) => (
               <Product
                 key={index}
+                product_id={product.id}
                 name={product.name}
                 description={
                   product.description?.length > 0
@@ -26,6 +27,7 @@ export default function ProductsContainer({ products }) {
                 store={
                   product.prices.length > 0 ? product.prices[0].store : 'N/A'
                 }
+                setUpdateShoppingList={setUpdateShoppingList}
               />
             ))}
           </div>
