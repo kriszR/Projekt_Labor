@@ -62,12 +62,14 @@ export async function POST(request) {
       product_id: product.id,
       price: json.price,
       currency: 'HUF',
-      store: json.store,
+      store_id: json.store_id,
     };
 
     const price = await prisma.prices.create({
       data: priceData,
     });
+
+
 
     return NextResponse.json(product);
   } catch (e) {

@@ -13,17 +13,18 @@
     product_id Int?
     price      Float?    @db.Real
     currency   String?   @db.VarChar
-    store      String?   @db.VarChar
+    store_id    Int?
     user_id    Int?
     products   Products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     users      Users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    stores      Stores?    @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   }
 
   model Products {
     id                Int                 @id @default(autoincrement())
     name              String?             @db.VarChar
     description       String?             @db.VarChar
-    date            DateTime?
+    date              DateTime?
     prices            Prices[]
     shoppinglistitems ShoppingListItems[]
   }
@@ -54,8 +55,9 @@
     shoppinglists ShoppingLists[]
   }
 
-    model Shops {
+  model Stores {
     id            Int             @id @default(autoincrement())
-    name          String?         @db.VarChar
+    name          String?         @unique
+    prices        Prices[]
   }
 
