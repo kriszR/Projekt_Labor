@@ -49,7 +49,7 @@ export async function POST(request) {
     const json = await request.json();
 
     const productData = {
-      name: json.name,
+      name: json.product_name,
       date: json.longDate,
       description: json.description,
     };
@@ -68,7 +68,6 @@ export async function POST(request) {
     const price = await prisma.prices.create({
       data: priceData,
     });
-
 
 
     return NextResponse.json(product);
