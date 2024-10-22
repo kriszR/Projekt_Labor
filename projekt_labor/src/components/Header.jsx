@@ -2,8 +2,12 @@
 import Link from 'next/link';
 import CartSVG from '../../public/images/CartSVG';
 import { usePathname } from 'next/navigation';
+import Hamburger from 'hamburger-react';
+import { useState } from 'react';
 
 export default function Header() {
+  const [isOpen, setOpen] = useState(false);
+
   const pathname = usePathname();
 
   const isActive = (path) => {
@@ -11,11 +15,13 @@ export default function Header() {
   };
 
   return (
-    <header className='sticky top-0 bg-secondary text-primary z-50'>
+    <header className='sticky top-0 z-50 bg-secondary text-primary'>
       <nav className='container mx-auto flex min-h-[100px] items-center justify-between'>
         <Link href={'/'}>
           <CartSVG
-            className={'w-20 fill-slate-200 transition hover:fill-primary'}
+            className={
+              'w-14 fill-slate-200 transition hover:fill-primary sm:w-20'
+            }
           />
         </Link>
 
@@ -34,6 +40,7 @@ export default function Header() {
             </Link>
           </li>
         </ul>
+        <Hamburger toggled={isOpen} toggle={setOpen} />
       </nav>
     </header>
   );

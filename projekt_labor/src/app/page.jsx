@@ -4,7 +4,7 @@ import ShoppingList from '@/components/ShoppingList';
 import { useState } from 'react';
 
 export default function Home() {
-  const [updateShoppingList, setUpdateShoppingList] = useState('');
+  const [updateShoppingList, setUpdateShoppingList] = useState(true);
 
   return (
     <main>

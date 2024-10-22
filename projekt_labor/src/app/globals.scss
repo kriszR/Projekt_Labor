@@ -28,7 +28,7 @@
   nav {
     ul {
       li {
-        @apply px-10;
+        @apply px-5 sm:px-10 flex justify-center items-center text-center;
 
         a {
           @apply rounded p-1 font-bold transition;

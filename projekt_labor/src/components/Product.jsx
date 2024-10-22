@@ -8,7 +8,7 @@ async function AddProductToShoppingList(product_id, setAlert, setLoading) {
   try {
     setLoading(true);
 
-    const request = await fetch('http://localhost:3000/api/shoppinglistitems', {
+    const request = await fetch('/api/shoppinglistitems', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,9 +38,9 @@ export default function Product({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setUpdateShoppingList('false'), 200);
+    if(!loading) setTimeout(() => setUpdateShoppingList(false), 5000);
     setTimeout(() => setAlert({ message: '', type: '' }), 3000);
-  }, [alert, setUpdateShoppingList]);
+  }, [alert, setUpdateShoppingList, loading]);
 
   return (
     <div className='w-full px-1 md:w-1/2 lg:w-1/4'>
@@ -57,7 +57,7 @@ export default function Product({
               className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'
               onClick={() => {
                 AddProductToShoppingList(product_id, setAlert, setLoading);
-                setUpdateShoppingList('true');
+                setUpdateShoppingList(true);
               }}
             >
               {loading ? <Loading /> : <Plus size={20} />}

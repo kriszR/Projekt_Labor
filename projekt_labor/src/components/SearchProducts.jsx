@@ -10,7 +10,7 @@ async function searchProducts(setProducts, searchTerm, setAlert, setLoading) {
     setLoading(true);
 
     const response = await fetch(
-      `http://localhost:3000/api/products?search=${searchTerm}`,
+      `/api/products?search=${searchTerm}`,
       {
         method: 'GET',
         headers: {
