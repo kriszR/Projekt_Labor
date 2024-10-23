@@ -19,8 +19,10 @@ async function AddProductToShoppingList(product_id, setAlert, setLoading) {
     if (!request.ok) throw Error("Couldn't add product, try again!");
 
     setAlert({ message: 'Product added to shopping list!', type: 'success' });
+    return true;
   } catch (err) {
     setAlert({ message: err.message, type: 'error' });
+    return false;
   } finally {
     setLoading(false);
   }
@@ -38,7 +40,6 @@ export default function Product({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(!loading) setTimeout(() => setUpdateShoppingList(false), 5000);
     setTimeout(() => setAlert({ message: '', type: '' }), 3000);
   }, [alert, setUpdateShoppingList, loading]);
 
@@ -55,9 +56,13 @@ export default function Product({
             <p>Store: {store}</p>
             <Button
               className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'
-              onClick={() => {
-                AddProductToShoppingList(product_id, setAlert, setLoading);
-                setUpdateShoppingList(true);
+              onClick={async () => {
+                const success = await AddProductToShoppingList(
+                  product_id,
+                  setAlert,
+                  setLoading
+                );
+                if (success) setUpdateShoppingList(true);
               }}
             >
               {loading ? <Loading /> : <Plus size={20} />}

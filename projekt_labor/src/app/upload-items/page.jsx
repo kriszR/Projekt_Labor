@@ -149,7 +149,6 @@ export default function UploadPage() {
 
         <Label htmlFor='store'>Store *</Label>
         <Select
-          className='w-full'
           onValueChange={handleStoreChange}
           value={store}
           id='store'
@@ -160,7 +159,7 @@ export default function UploadPage() {
           <SelectContent>
             <SelectGroup>
               {stores.map((stores, index) => (
-                <SelectItem key={index} value={stores}>
+                <SelectItem key={index} value={store.id}>
                   {stores}{' '}
                 </SelectItem>
               ))}

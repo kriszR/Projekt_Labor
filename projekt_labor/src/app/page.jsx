@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import SearchProducts from '@/components/SearchProducts';
 import ShoppingList from '@/components/ShoppingList';
 import { useState } from 'react';
@@ -9,7 +9,10 @@ export default function Home() {
   return (
     <main>
       <SearchProducts setUpdateShoppingList={setUpdateShoppingList} />
-      <ShoppingList updateShoppingList={updateShoppingList} />
+      <ShoppingList
+        updateShoppingList={updateShoppingList}
+        setUpdateShoppingList={setUpdateShoppingList}
+      />
     </main>
   );
 }

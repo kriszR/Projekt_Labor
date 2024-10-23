@@ -16,10 +16,14 @@ module.exports = {
         secondary: '#7aadff',
       },
       spacing: {
+        '3/5': '60%',
         '1/2': '50%',
         '1/3': '33.3333%',
         '1/4': '25%',
       },
+    },
+    container: {
+      padding: '15px',
     },
   },
   plugins: [require('tailwindcss-animate')],

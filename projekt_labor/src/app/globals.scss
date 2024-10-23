@@ -10,12 +10,18 @@
 
 @layer base {
   body {
-    @apply min-h-[200vh] bg-primary text-secondary;
+    @apply bg-primary text-secondary;
   }
 
   main {
+    @apply min-h-[200vh];
+
     > div {
       @apply container mx-auto my-32;
+
+      &:first-child {
+        @apply mt-0 pt-[calc(8rem+95px)];
+      }
 
       &:last-child {
         @apply mb-0;
@@ -28,7 +34,7 @@
   nav {
     ul {
       li {
-        @apply px-5 sm:px-10 flex justify-center items-center text-center;
+        @apply flex items-center justify-center px-5 text-center sm:px-10;
 
         a {
           @apply rounded p-1 font-bold transition;
@@ -44,7 +50,7 @@
 
   .shopping-list {
     @apply relative z-10 w-full;
-    
+
     ul {
       li {
         @apply border-b-2 border-b-black;
