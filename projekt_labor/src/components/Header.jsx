@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import CartSVG from '../../public/images/CartSVG';
 import { usePathname } from 'next/navigation';
+import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -34,6 +36,8 @@ export default function Header() {
             </Link>
           </li>
         </ul>
+        <LoginLink>Sign in</LoginLink>
+        <RegisterLink>Sign up</RegisterLink>
       </nav>
     </header>
   );
