@@ -1,11 +1,18 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export async function GET(request) {
+export async function GET() {
   try {
-     const products = await prisma.shoppingListItems.findMany();
+    const items = await prisma.shoppingListItems.findMany({
+      where: {
+        shopping_list_id: 1,
+      },
+      include: {
+        products: true,
+      },
+    });
 
-    return NextResponse.json(products);
+    return NextResponse.json(items);
   } catch (err) {
     throw Error(err);
   }
@@ -13,31 +20,47 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    // { name, category, description, price, shop }
     const json = await request.json();
 
-    const productData = {
-      name: json.name,
-      category: json.category,
-      description: json.description,
-    };
-
-    const product = await prisma.products.create({
-      data: productData,
+    const existingProduct = await prisma.shoppingListItems.findFirst({
+      where: {
+        product_id: json.product_id,
+      },
     });
 
-    const priceData = {
-      product_id: product.id,
-      price: json.price,
-      currency: 'HUF',
-      store: json.store,
-    };
+    let shoppingListItem;
 
-    const price = await prisma.prices.create({
-      data: priceData,
+    if (existingProduct) {
+      shoppingListItem = await prisma.shoppingListItems.update({
+        where: { id: existingProduct.id },
+        data: { quantity: { increment: 1 } },
+      });
+    } else {
+      shoppingListItem = await prisma.shoppingListItems.create({
+        data: {
+          shopping_list_id: 1,
+          product_id: json.product_id,
+          quantity: 1,
+        },
+      });
+    }
+    return NextResponse.json(shoppingListItem);
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const json = await request.json();
+
+    const shoppingListItem = await prisma.shoppingListItems.delete({
+      where: {
+        id: json.id,
+      },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(shoppingListItem);
   } catch (e) {
     throw Error(e.message);
   }

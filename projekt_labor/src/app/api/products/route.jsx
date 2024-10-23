@@ -18,12 +18,6 @@ export async function GET(request) {
               },
             },
             {
-              category: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
               description: {
                 contains: search,
                 mode: 'insensitive',
@@ -51,12 +45,11 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    // { name, category, description, price, shop }
     const json = await request.json();
 
     const productData = {
       name: json.name,
-      category: json.category,
+      date: json.longDate,
       description: json.description,
     };
 
@@ -68,10 +61,10 @@ export async function POST(request) {
       product_id: product.id,
       price: json.price,
       currency: 'HUF',
-      store: json.store,
+      store_id: json.store_id,
     };
 
-    const price = await prisma.prices.create({
+    await prisma.prices.create({
       data: priceData,
     });
 
