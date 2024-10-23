@@ -26,13 +26,21 @@ export async function GET(request) {
           ],
         },
         include: {
-          prices: true,
+          prices: {
+            include: {
+              stores: true,
+            },
+          },
         },
       });
     } else {
       products = await prisma.products.findMany({
         include: {
-          prices: true,
+          prices: {
+            include: {
+              stores: true,
+            },
+          },
         },
       });
     }
@@ -68,7 +76,6 @@ export async function POST(request) {
     const price = await prisma.prices.create({
       data: priceData,
     });
-
 
     return NextResponse.json(product);
   } catch (e) {

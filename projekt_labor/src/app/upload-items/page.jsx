@@ -20,16 +20,16 @@ async function UploadProduct(
   date,
   description,
   price,
+  store_id,
   setAlert,
   setLoading
 ) {
   try {
-    console.log(date);
     setLoading(true);
 
     const longDate = new Date(date).toISOString();
 
-    if (!product_name || !price || !store_name)
+    if (!product_name || !price)
       throw Error('Please fill out all the required fields!');
 
     const request = await fetch('http://localhost:3000/api/products', {
@@ -42,6 +42,7 @@ async function UploadProduct(
         longDate,
         description,
         price,
+        store_id,
       }),
     });
 
@@ -55,7 +56,7 @@ async function UploadProduct(
   }
 }
 
-async function addStore(store_name) {
+async function addStore(store_name, setAlert) {
   /*if (newStore && !stores?.includes(newStore)) {
     const updatedStores = [...stores, newStore];
     setStores(updatedStores);
@@ -65,6 +66,7 @@ async function addStore(store_name) {
   } else {
     alert('The store already exists!');
   }*/
+  try {
     const request = await fetch('http://localhost:3000/api/stores', {
       method: 'POST',
       headers: {
@@ -74,8 +76,14 @@ async function addStore(store_name) {
         store_name,
       }),
     });
-  }
 
+    if (!request.ok) throw Error("Couldn't add store, try again!");
+
+    setAlert({ message: 'Store successfully added!', type: 'success' });
+  } catch (err) {
+    setAlert({ message: err.message, type: 'error' });
+  }
+}
 
 async function getStores() {
   try {
@@ -97,7 +105,7 @@ export default function UploadPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState();
   const [price, setPrice] = useState(0);
-  const [store, setStore] = useState('');
+  const [storeID, setStore] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
@@ -111,7 +119,7 @@ export default function UploadPage() {
       setName('');
       setDescription('');
       setPrice(0);
-      setStore('');
+      //setStore('');
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
   }, [alert]);
@@ -122,6 +130,8 @@ export default function UploadPage() {
         const stores = await getStores();
         setStores(stores);
       })();
+      setAddBtnPushed(false);
+      setShowInputStore(false);
     }
   }, [addBtnPushed]);
 
@@ -139,7 +149,6 @@ export default function UploadPage() {
 
     if (savedStores) setStores(JSON.parse(savedStores));
   }, []);*/
-  console.log(stores);
 
   return (
     <main>
@@ -192,7 +201,7 @@ export default function UploadPage() {
         <Select
           className='w-full'
           onValueChange={handleStoreChange}
-          value={store}
+          value={storeID}
           id='store'
         >
           <SelectTrigger>
@@ -201,8 +210,8 @@ export default function UploadPage() {
           <SelectContent>
             <SelectGroup>
               {stores?.map((store, index) => (
-                <SelectItem key={index} value={store.name}>
-                  {store.name }
+                <SelectItem key={index} value={store.id}>
+                  {store.name}
                 </SelectItem>
               ))}
               <SelectItem value='other'>Other</SelectItem>
@@ -218,7 +227,13 @@ export default function UploadPage() {
               value={newStore}
               onChange={(e) => setNewStore(e.target.value)}
             />
-            <Button onClick={() => addStore(newStore)} className='mt-2'>
+            <Button
+              onClick={() => {
+                addStore(newStore, setAlert);
+                setAddBtnPushed(true);
+              }}
+              className='mt-2'
+            >
               Add
             </Button>
           </div>
@@ -232,7 +247,7 @@ export default function UploadPage() {
               date,
               description,
               price,
-              store,
+              storeID,
               setAlert,
               setLoading
             )

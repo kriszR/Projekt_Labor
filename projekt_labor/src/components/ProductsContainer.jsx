@@ -1,6 +1,7 @@
 import Product from './Product';
 
 export default function ProductsContainer({ products }) {
+  console.log(products)
   return (
     <>
       {products.length > 0 && (
@@ -24,7 +25,7 @@ export default function ProductsContainer({ products }) {
                   product.prices.length > 0 ? product.prices[0].currency : 'N/A'
                 }
                 store={
-                  product.prices.length > 0 ? product.prices[0].store : 'N/A'
+                  product.prices[0].stores?.name.length > 0 ? product.prices[0].stores.name : 'N/A'
                 }
               />
             ))}
