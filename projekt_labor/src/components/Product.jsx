@@ -5,7 +5,12 @@ import Alert from '@/components/Alert';
 import Loading from '@/components/Loading';
 import { useUser } from './UserContext';
 
-async function AddProductToShoppingList(product_id, shopping_list_id, setAlert, setLoading) {
+async function AddProductToShoppingList(
+  product_id,
+  shopping_list_id,
+  setAlert,
+  setLoading
+) {
   try {
     setLoading(true);
 

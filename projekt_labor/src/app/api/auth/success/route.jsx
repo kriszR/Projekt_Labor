@@ -24,9 +24,9 @@ export async function GET() {
 
     await prisma.shoppingLists.create({
       data: {
-        user_id: dbUser.id
-      }
-    })
+        user_id: dbUser.id,
+      },
+    });
   }
 
   return NextResponse.redirect('http://localhost:3000/');

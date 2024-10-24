@@ -12,8 +12,7 @@ export const UserProvider = ({ children }) => {
     const fetchData = async () => {
       const response = await fetch('/api/users');
       const data = await response.json();
-      setUser(data)
-
+      setUser(data);
     };
 
     fetchData();
