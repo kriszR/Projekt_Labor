@@ -26,13 +26,21 @@ export async function GET(request) {
           ],
         },
         include: {
-          prices: true,
+          prices: {
+            include: {
+              stores: true,
+            },
+          },
         },
       });
     } else {
       products = await prisma.products.findMany({
         include: {
-          prices: true,
+          prices: {
+            include: {
+              stores: true,
+            },
+          },
         },
       });
     }
@@ -48,7 +56,7 @@ export async function POST(request) {
     const json = await request.json();
 
     const productData = {
-      name: json.name,
+      name: json.product_name,
       date: json.longDate,
       description: json.description,
     };

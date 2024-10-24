@@ -1,62 +1,62 @@
-generator client {
-  provider = "prisma-client-js"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
-}
+  datasource db {
+    provider  = "postgresql"
+    url       = env("POSTGRES_PRISMA_URL")
+    directUrl = env("POSTGRES_URL_NON_POOLING")
+  }
 
-model Prices {
-  id         Int       @id @default(autoincrement())
-  product_id Int?
-  price      Float?    @db.Real
-  currency   String?   @db.VarChar
-  user_id    Int?
-  store_id   Int?
-  products   Products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Stores     Stores?   @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users      Users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
+  model Prices {
+    id         Int       @id @default(autoincrement())
+    product_id Int?
+    price      Float?    @db.Real
+    currency   String?   @db.VarChar
+    store_id    Int?
+    user_id    Int?
+    products   Products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users      Users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    stores      Stores?    @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  }
 
-model Products {
-  id                Int                 @id @default(autoincrement())
-  name              String?             @db.VarChar
-  description       String?             @db.VarChar
-  date              DateTime?
-  prices            Prices[]
-  shoppinglistitems ShoppingListItems[]
-}
+  model Products {
+    id                Int                 @id @default(autoincrement())
+    name              String?             @db.VarChar
+    description       String?             @db.VarChar
+    date              DateTime?
+    prices            Prices[]
+    shoppinglistitems ShoppingListItems[]
+  }
 
-model ShoppingListItems {
-  id               Int            @id @default(autoincrement())
-  shopping_list_id Int?
-  product_id       Int?
-  quantity         Int?
-  products         Products?      @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  shoppinglists    ShoppingLists? @relation(fields: [shopping_list_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
+  model ShoppingListItems {
+    id               Int            @id @default(autoincrement())
+    shopping_list_id Int?
+    product_id       Int?
+    quantity         Int?
+    products         Products?      @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    shoppinglists    ShoppingLists? @relation(fields: [shopping_list_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  }
 
-model ShoppingLists {
-  id                Int                 @id @default(autoincrement())
-  name              String?             @db.VarChar
-  user_id           Int?
-  shoppinglistitems ShoppingListItems[]
-  users             Users?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
+  model ShoppingLists {
+    id                Int                 @id @default(autoincrement())
+    name              String?             @db.VarChar
+    user_id           Int?
+    shoppinglistitems ShoppingListItems[]
+    users             Users?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  }
 
-model Users {
-  id            Int             @id @default(autoincrement())
-  username      String?         @db.VarChar
-  role          String?         @db.VarChar
-  password      String?         @db.VarChar
-  prices        Prices[]
-  shoppinglists ShoppingLists[]
-}
+  model Users {
+    id            Int             @id @default(autoincrement())
+    kindeId       String          @unique
+    email         String          @unique
+    role          String?         @db.VarChar
+    prices        Prices[]
+    shoppinglists ShoppingLists[]
+  }
 
-model Stores {
-  id     Int      @id @default(autoincrement())
-  name   String?  @unique
-  Prices Prices[]
-}
+  model Stores {
+    id            Int             @id @default(autoincrement())
+    name          String?         @unique
+    prices        Prices[]
+  }

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import CartSVG from '../../public/images/CartSVG';
 import { usePathname } from 'next/navigation';
+import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 import Hamburger from 'hamburger-react';
 import { useEffect, useState } from 'react';
 
@@ -68,6 +69,8 @@ export default function Header() {
                 Upload Items
               </Link>
             </li>
+            <LoginLink>Sign in</LoginLink>
+            <RegisterLink>Sign up</RegisterLink>
           </ul>
         </nav>
       </div>

@@ -15,11 +15,11 @@ import Alert from '@/components/Alert';
 import Loading from '@/components/Loading';
 
 async function UploadProduct(
-  name,
+  product_name,
   date,
   description,
   price,
-  store,
+  store_id,
   setAlert,
   setLoading
 ) {
@@ -36,7 +36,13 @@ async function UploadProduct(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, longDate, description, price, store }),
+      body: JSON.stringify({
+        product_name,
+        longDate,
+        description,
+        price,
+        store_id,
+      }),
     });
 
     if (!request.ok) throw Error("Couldn't add item, try again!");
@@ -47,30 +53,86 @@ async function UploadProduct(
   } finally {
     setLoading(false);
   }
-  
+}
+
+async function addStore(store_name, setAlert) {
+  /*if (newStore && !stores?.includes(newStore)) {
+    const updatedStores = [...stores, newStore];
+    setStores(updatedStores);
+    setNewStore('');
+    setShowInputStore(false);
+    setAddBtnPushed(true);
+  } else {
+    alert('The store already exists!');
+  }*/
+  try {
+    const request = await fetch('http://localhost:3000/api/stores', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        store_name,
+      }),
+    });
+
+    if (!request.ok) throw Error("Couldn't add store, try again!");
+
+    setAlert({ message: 'Store successfully added!', type: 'success' });
+  } catch (err) {
+    setAlert({ message: err.message, type: 'error' });
+  }
+}
+
+async function getStores() {
+  try {
+    const response = await fetch('http://localhost:3000/api/stores', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export default function UploadPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState();
   const [price, setPrice] = useState(0);
-  const [store, setStore] = useState('');
+  const [storeID, setStore] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
   const [showInputStore, setShowInputStore] = useState(false);
-  const [stores, setStores] = useState(['Aldi', 'Lidl', 'Tesco']);
+  const [stores, setStores] = useState([]);
   const [newStore, setNewStore] = useState('');
+  const [addBtnPushed, setAddBtnPushed] = useState(false);
 
   useEffect(() => {
     if (alert.type === 'success') {
       setName('');
       setDescription('');
       setPrice(0);
-      setStore('');
+      //setStore('');
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
   }, [alert]);
+
+  useEffect(() => {
+    {
+      (async () => {
+        const stores = await getStores();
+        setStores(stores);
+      })();
+      setAddBtnPushed(false);
+      setShowInputStore(false);
+    }
+  }, [addBtnPushed]);
 
   const handleStoreChange = (value) => {
     if (value === 'other') {
@@ -81,24 +143,11 @@ export default function UploadPage() {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const savedStores = localStorage.getItem('stores');
 
     if (savedStores) setStores(JSON.parse(savedStores));
-  }, []);
-
-  const addStore = () => {
-    if (newStore && !stores.includes(newStore)) {
-      const updatedStores = [...stores, newStore];
-      setStores(updatedStores);
-      setStore(newStore);
-      setNewStore('');
-      setShowInputStore(false);
-      localStorage.setItem('stores', JSON.stringify(updatedStores));
-    } else {
-      alert('The store already exists!');
-    }
-  };
+  }, []);*/
 
   return (
     <main>
@@ -150,7 +199,7 @@ export default function UploadPage() {
         <Label htmlFor='store'>Store *</Label>
         <Select
           onValueChange={handleStoreChange}
-          value={store}
+          value={storeID}
           id='store'
         >
           <SelectTrigger>
@@ -158,9 +207,9 @@ export default function UploadPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {stores.map((stores, index) => (
+              {stores?.map((store, index) => (
                 <SelectItem key={index} value={store.id}>
-                  {stores}{' '}
+                  {store.name}
                 </SelectItem>
               ))}
               <SelectItem value='other'>Other</SelectItem>
@@ -176,7 +225,13 @@ export default function UploadPage() {
               value={newStore}
               onChange={(e) => setNewStore(e.target.value)}
             />
-            <Button onClick={addStore} className='mt-2'>
+            <Button
+              onClick={() => {
+                addStore(newStore, setAlert);
+                setAddBtnPushed(true);
+              }}
+              className='mt-2'
+            >
               Add
             </Button>
           </div>
@@ -185,7 +240,15 @@ export default function UploadPage() {
         <Button
           className='justify-self-center'
           onClick={() =>
-            UploadProduct(name, date, description, price, store, setAlert, setLoading)
+            UploadProduct(
+              name,
+              date,
+              description,
+              price,
+              storeID,
+              setAlert,
+              setLoading
+            )
           }
         >
           Upload Item

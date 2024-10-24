@@ -11,11 +11,17 @@
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@kinde-oss/kinde-auth-nextjs": "^2.4.3",
     "@prisma/client": "^5.21.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-navigation-menu": "^1.2.1",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@tanstack/react-query": "^5.59.16",
+    "@trpc/client": "^11.0.0-rc.593",
+    "@trpc/next": "^11.0.0-rc.593",
+    "@trpc/react-query": "^11.0.0-rc.593",
+    "@trpc/server": "^11.0.0-rc.593",
     "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -27,9 +33,11 @@
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
+    "saas": "^1.0.0",
     "sass": "^1.79.4",
     "tailwind-merge": "^2.5.3",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",
