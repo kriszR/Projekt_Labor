@@ -53,7 +53,6 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    // { name, category, description, price, shop }
     const json = await request.json();
 
     const productData = {
@@ -73,7 +72,7 @@ export async function POST(request) {
       store_id: json.store_id,
     };
 
-    const price = await prisma.prices.create({
+    await prisma.prices.create({
       data: priceData,
     });
 

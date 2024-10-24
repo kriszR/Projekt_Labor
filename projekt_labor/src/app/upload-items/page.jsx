@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -26,13 +25,13 @@ async function UploadProduct(
 ) {
   try {
     setLoading(true);
-
+    
+    if (!name || !price || !store)
+      throw Error('Please fill out all the required fields!');
+    
     const longDate = new Date(date).toISOString();
 
-    if (!product_name || !price)
-      throw Error('Please fill out all the required fields!');
-
-    const request = await fetch('http://localhost:3000/api/products', {
+    const request = await fetch('/api/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -199,7 +198,6 @@ export default function UploadPage() {
 
         <Label htmlFor='store'>Store *</Label>
         <Select
-          className='w-full'
           onValueChange={handleStoreChange}
           value={storeID}
           id='store'
