@@ -3,8 +3,9 @@ import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Alert from '@/components/Alert';
 import Loading from '@/components/Loading';
+import { useUser } from './UserContext';
 
-async function AddProductToShoppingList(product_id, setAlert, setLoading) {
+async function AddProductToShoppingList(product_id, shopping_list_id, setAlert, setLoading) {
   try {
     setLoading(true);
 
@@ -13,7 +14,7 @@ async function AddProductToShoppingList(product_id, setAlert, setLoading) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ product_id }),
+      body: JSON.stringify({ product_id, shopping_list_id }),
     });
 
     if (!request.ok) throw Error("Couldn't add product, try again!");
@@ -38,6 +39,7 @@ export default function Product({
 }) {
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const user = useUser();
 
   useEffect(() => {
     setTimeout(() => setAlert({ message: '', type: '' }), 3000);
@@ -54,19 +56,22 @@ export default function Product({
             <p>{description}</p>
             <p>Price: {price}</p>
             <p>Store: {store}</p>
-            <Button
-              className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'
-              onClick={async () => {
-                const success = await AddProductToShoppingList(
-                  product_id,
-                  setAlert,
-                  setLoading
-                );
-                if (success) setUpdateShoppingList(true);
-              }}
-            >
-              {loading ? <Loading /> : <Plus size={20} />}
-            </Button>
+            {user?.id && (
+              <Button
+                className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'
+                onClick={async () => {
+                  const success = await AddProductToShoppingList(
+                    product_id,
+                    user?.shoppinglists[0].id,
+                    setAlert,
+                    setLoading
+                  );
+                  if (success) setUpdateShoppingList(true);
+                }}
+              >
+                {loading ? <Loading /> : <Plus size={20} />}
+              </Button>
+            )}
           </>
         )}
       </div>

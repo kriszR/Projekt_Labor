@@ -4,16 +4,20 @@ import { ScrollText } from 'lucide-react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loading from './Loading';
+import { useUser } from './UserContext';
 
-async function getShoppingListItems(setLoading) {
+async function getShoppingListItems(shopping_list_id, setLoading) {
   try {
     setLoading(true);
-    const response = await fetch('/api/shoppinglistitems', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `/api/shoppinglistitems?id=${shopping_list_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     const data = await response.json();
     return data.map((item) => ({
@@ -48,16 +52,22 @@ export default function ShoppingList({
 }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const user = useUser();
 
   useEffect(() => {
     if (updateShoppingList) {
       (async () => {
-        const items = await getShoppingListItems(setLoading);
-        setItems(items);
+        if (user) {
+          const items = await getShoppingListItems(
+            user?.shoppinglists[0].id,
+            setLoading
+          );
+          setItems(items);
+          setUpdateShoppingList(false);
+        }
       })();
-      setUpdateShoppingList(false);
     }
-  }, [updateShoppingList, setUpdateShoppingList]);
+  }, [user, updateShoppingList, setUpdateShoppingList]);
 
   const handleDelete = async (id) => {
     const remainingItems = items.filter((item) => item.id !== id);
@@ -80,33 +90,41 @@ export default function ShoppingList({
         style={{ backgroundImage: `url('/images/paper-background.jpg')` }}
       >
         <div className='shopping-list'>
-          <h2 className='text-center underline'>Shopping List Name</h2>
-          <ul>
-            <AnimatePresence>
-              {(items.length &&
-                items.map((item) => (
-                  <motion.li
-                    key={item.id}
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.3 }}
-                    className='flex justify-between py-2'
-                  >
-                    {item.name} x{item.quantity}
-                    <button
-                      className='align-bottom'
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <X color='red' />
-                    </button>
-                  </motion.li>
-                ))) ||
-                (loading && (
-                  <Loading message={'Loading items, please wait...'} />
-                )) || <span>Shopping list is empty!</span>}
-            </AnimatePresence>
-          </ul>
+          {(user?.id && (
+            <>
+              <h2 className='text-center underline'>Shopping List Name</h2>
+              <ul>
+                <AnimatePresence>
+                  {(items?.length &&
+                    items.map((item) => (
+                      <motion.li
+                        key={item.id}
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ duration: 0.3 }}
+                        className='flex justify-between py-2'
+                      >
+                        {item.name} x{item.quantity}
+                        <button
+                          className='align-bottom'
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <X color='red' />
+                        </button>
+                      </motion.li>
+                    ))) ||
+                    (loading && (
+                      <Loading message={'Loading items, please wait...'} />
+                    )) || <span>Shopping list is empty!</span>}
+                </AnimatePresence>
+              </ul>
+            </>
+          )) || (
+            <h2 className='text-xl text-red-500'>
+              To use the shopping list, you must log in!
+            </h2>
+          )}
         </div>
       </div>
     </a>

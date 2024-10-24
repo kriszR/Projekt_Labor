@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import Alert from '@/components/Alert';
 import Loading from '@/components/Loading';
+import { useUser } from '@/components/UserContext';
 
 async function UploadProduct(
   product_name,
@@ -20,15 +21,18 @@ async function UploadProduct(
   description,
   price,
   store_id,
+  user,
   setAlert,
   setLoading
 ) {
   try {
     setLoading(true);
-    
-    if (!name || !price || !store)
+
+    if (!user) throw Error('No user found, please try again!');
+
+    if (!product_name || !price || !store_id)
       throw Error('Please fill out all the required fields!');
-    
+
     const longDate = new Date(date).toISOString();
 
     const request = await fetch('/api/products', {
@@ -42,6 +46,7 @@ async function UploadProduct(
         description,
         price,
         store_id,
+        user,
       }),
     });
 
@@ -56,17 +61,8 @@ async function UploadProduct(
 }
 
 async function addStore(store_name, setAlert) {
-  /*if (newStore && !stores?.includes(newStore)) {
-    const updatedStores = [...stores, newStore];
-    setStores(updatedStores);
-    setNewStore('');
-    setShowInputStore(false);
-    setAddBtnPushed(true);
-  } else {
-    alert('The store already exists!');
-  }*/
   try {
-    const request = await fetch('http://localhost:3000/api/stores', {
+    const request = await fetch('/api/stores', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,17 +82,16 @@ async function addStore(store_name, setAlert) {
 
 async function getStores() {
   try {
-    const response = await fetch('http://localhost:3000/api/stores', {
+    const response = await fetch('/api/stores', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
@@ -104,21 +99,22 @@ export default function UploadPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState();
   const [price, setPrice] = useState(0);
-  const [storeID, setStore] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [alert, setAlert] = useState({ message: '', type: '' });
-  const [loading, setLoading] = useState(false);
   const [showInputStore, setShowInputStore] = useState(false);
   const [stores, setStores] = useState([]);
   const [newStore, setNewStore] = useState('');
+  const [storeID, setStore] = useState('');
   const [addBtnPushed, setAddBtnPushed] = useState(false);
+  const [alert, setAlert] = useState({ message: '', type: '' });
+  const [loading, setLoading] = useState(false);
+  const user = useUser();
 
   useEffect(() => {
     if (alert.type === 'success') {
       setName('');
       setDescription('');
       setPrice(0);
-      //setStore('');
+      setStore('');
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
   }, [alert]);
@@ -142,12 +138,6 @@ export default function UploadPage() {
       setShowInputStore(false);
     }
   };
-
-  /*useEffect(() => {
-    const savedStores = localStorage.getItem('stores');
-
-    if (savedStores) setStores(JSON.parse(savedStores));
-  }, []);*/
 
   return (
     <main>
@@ -197,11 +187,7 @@ export default function UploadPage() {
         />
 
         <Label htmlFor='store'>Store *</Label>
-        <Select
-          onValueChange={handleStoreChange}
-          value={storeID}
-          id='store'
-        >
+        <Select onValueChange={handleStoreChange} value={storeID} id='store'>
           <SelectTrigger>
             <SelectValue placeholder='Select Store' />
           </SelectTrigger>
@@ -246,6 +232,7 @@ export default function UploadPage() {
               description,
               price,
               storeID,
+              user,
               setAlert,
               setLoading
             )

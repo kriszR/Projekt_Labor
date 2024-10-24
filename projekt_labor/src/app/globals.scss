@@ -14,7 +14,7 @@
   }
 
   main {
-    @apply min-h-[200vh];
+    @apply min-h-screen;
 
     > div {
       @apply container mx-auto my-32;

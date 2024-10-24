@@ -49,6 +49,7 @@
   model Users {
     id            Int             @id @default(autoincrement())
     kindeId       String          @unique
+    firstName     String          @db.VarChar
     email         String          @unique
     role          String?         @db.VarChar
     prices        Prices[]

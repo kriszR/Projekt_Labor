@@ -6,44 +6,36 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
 
-    let products;
+    let queryArgs = {
+      include: {
+        prices: {
+          include: {
+            stores: true,
+          },
+        },
+      },
+    };
+
     if (search) {
-      products = await prisma.products.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
-              description: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
-        include: {
-          prices: {
-            include: {
-              stores: true,
+      queryArgs.where = {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive',
             },
           },
-        },
-      });
-    } else {
-      products = await prisma.products.findMany({
-        include: {
-          prices: {
-            include: {
-              stores: true,
+          {
+            description: {
+              contains: search,
+              mode: 'insensitive',
             },
           },
-        },
-      });
+        ],
+      };
     }
+
+    const products = await prisma.products.findMany(queryArgs);
 
     return NextResponse.json(products);
   } catch (err) {
@@ -67,6 +59,7 @@ export async function POST(request) {
 
     const priceData = {
       product_id: product.id,
+      user_id: json.user.id,
       price: json.price,
       currency: 'HUF',
       store_id: json.store_id,

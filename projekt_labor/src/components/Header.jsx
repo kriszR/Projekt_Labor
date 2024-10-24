@@ -2,12 +2,18 @@
 import Link from 'next/link';
 import CartSVG from '../../public/images/CartSVG';
 import { usePathname } from 'next/navigation';
-import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
+import {
+  RegisterLink,
+  LoginLink,
+  LogoutLink,
+} from '@kinde-oss/kinde-auth-nextjs/components';
 import Hamburger from 'hamburger-react';
 import { useEffect, useState } from 'react';
+import { useUser } from './UserContext';
 
 export default function Header() {
   const [isOpen, setOpen] = useState(false);
+  const user = useUser();
 
   const pathname = usePathname();
 
@@ -22,7 +28,7 @@ export default function Header() {
   return (
     <header className='relative z-40 w-screen text-primary'>
       <div className='fixed inset-x-0 top-0 z-10 w-screen bg-secondary'>
-        <nav className='container mx-auto flex h-[70px] lg:h-[95px] items-center justify-between'>
+        <nav className='container mx-auto flex h-[70px] items-center justify-between lg:h-[95px]'>
           <Link href={'/'}>
             <CartSVG
               className={
@@ -37,14 +43,34 @@ export default function Header() {
                 Home
               </Link>
             </li>
-            <li>
-              <Link
-                href={'/upload-items'}
-                className={`${isActive('/upload-items')}`}
-              >
-                Upload Items
-              </Link>
-            </li>
+
+            {user?.id && (
+              <li>
+                {' '}
+                <Link
+                  href={'/upload-items'}
+                  className={`${isActive('/upload-items')}`}
+                >
+                  Upload Items
+                </Link>
+              </li>
+            )}
+
+            {(!user?.id && (
+              <li>
+                <LoginLink>Sign in</LoginLink>/
+                <RegisterLink>Sign up</RegisterLink>
+              </li>
+            )) || (
+              <>
+                <span className='inline-flex items-center justify-center font-bold'>
+                  Welcome back, {user?.firstName}!
+                </span>
+                <li>
+                  <LogoutLink>Log Out</LogoutLink>
+                </li>
+              </>
+            )}
           </ul>
           <div className='lg:hidden'>
             <Hamburger toggled={isOpen} toggle={setOpen} />
@@ -52,7 +78,7 @@ export default function Header() {
         </nav>
       </div>
       <div
-        className={`fixed inset-0 bg-secondary lg:hidden ${isOpen ? 'translate-y-0' : '-translate-y-full -z-10'} transition-transform duration-500`}
+        className={`fixed inset-0 bg-secondary lg:hidden ${isOpen ? 'translate-y-0' : '-z-10 -translate-y-full'} transition-transform duration-500`}
       >
         <nav>
           <ul className='flex flex-col items-center gap-y-5 py-24 text-lg'>
@@ -69,8 +95,6 @@ export default function Header() {
                 Upload Items
               </Link>
             </li>
-            <LoginLink>Sign in</LoginLink>
-            <RegisterLink>Sign up</RegisterLink>
           </ul>
         </nav>
       </div>

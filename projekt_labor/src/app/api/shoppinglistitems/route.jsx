@@ -1,11 +1,14 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const shopping_list_id = parseInt(searchParams.get('id'));
+
     const items = await prisma.shoppingListItems.findMany({
       where: {
-        shopping_list_id: 1,
+        shopping_list_id: shopping_list_id,
       },
       include: {
         products: true,
@@ -38,12 +41,13 @@ export async function POST(request) {
     } else {
       shoppingListItem = await prisma.shoppingListItems.create({
         data: {
-          shopping_list_id: 1,
+          shopping_list_id: json.shopping_list_id,
           product_id: json.product_id,
           quantity: 1,
         },
       });
     }
+
     return NextResponse.json(shoppingListItem);
   } catch (e) {
     throw Error(e.message);
