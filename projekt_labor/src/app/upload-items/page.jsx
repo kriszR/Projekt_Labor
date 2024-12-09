@@ -170,9 +170,8 @@ export default function UploadPage() {
             max={99999999}
             id='price'
             placeholder='Price'
-            value={price}
-            onChange={(e) => {
-              e.target.value ? setPrice(parseInt(e.target.value)) : ''}}
+            value={price || ''}
+            onChange={(e) => setPrice(parseInt(e.target.value))}
           />
           <span className='ml-2'>Ft</span>
         </div>
