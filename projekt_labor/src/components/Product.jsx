@@ -51,7 +51,7 @@ export default function Product({
   }, [alert, setUpdateShoppingList, loading]);
 
   return (
-    <div className='w-full px-1 md:w-1/2 lg:w-1/4'>
+    <div className='w-full px-1 md:w-1/2 lg:w-1/4 shadow-lg'>
       <div className='relative h-full rounded bg-white p-2'>
         {alert.message ? (
           <Alert type={alert.type} message={alert.message} />

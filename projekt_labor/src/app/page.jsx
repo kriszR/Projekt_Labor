@@ -8,6 +8,7 @@ export default function Home() {
 
   return (
     <main>
+      <span className='background-home' />
       <SearchProducts setUpdateShoppingList={setUpdateShoppingList} />
       <ShoppingList
         updateShoppingList={updateShoppingList}

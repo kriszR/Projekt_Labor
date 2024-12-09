@@ -98,7 +98,7 @@ async function getStores() {
 export default function UploadPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState();
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(1);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [showInputStore, setShowInputStore] = useState(false);
   const [stores, setStores] = useState([]);
@@ -113,7 +113,7 @@ export default function UploadPage() {
     if (alert.type === 'success') {
       setName('');
       setDescription('');
-      setPrice(0);
+      setPrice(1);
       setStore('');
       setTimeout(() => setAlert({ message: '', type: '' }), 3000);
     }
@@ -141,7 +141,8 @@ export default function UploadPage() {
 
   return (
     <main>
-      <div className='grid w-full max-w-sm items-center gap-3'>
+      <span className='background-upload' />
+      <div className='grid w-full max-w-sm items-center gap-3 pb-10 bg-primary/75 backdrop-blur-sm shadow-lg'>
         <Label htmlFor='name'>Name *</Label>
         <Input
           type='input'
@@ -170,7 +171,8 @@ export default function UploadPage() {
             id='price'
             placeholder='Price'
             value={price}
-            onChange={(e) => setPrice(parseInt(e.target.value))}
+            onChange={(e) => {
+              e.target.value ? setPrice(parseInt(e.target.value)) : ''}}
           />
           <span className='ml-2'>Ft</span>
         </div>

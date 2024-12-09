@@ -11,7 +11,15 @@ export async function GET(request) {
         shopping_list_id: shopping_list_id,
       },
       include: {
-        products: true,
+        products: {
+          include: {
+            prices: {
+              include: {
+                stores: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -28,6 +36,7 @@ export async function POST(request) {
     const existingProduct = await prisma.shoppingListItems.findFirst({
       where: {
         product_id: json.product_id,
+        shopping_list_id: json.shopping_list_id,
       },
     });
 

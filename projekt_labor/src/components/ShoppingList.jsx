@@ -23,6 +23,9 @@ async function getShoppingListItems(shopping_list_id, setLoading) {
     return data.map((item) => ({
       id: item.id,
       name: item.products.name,
+      price: item.products.prices[0].price,
+      currency: item.products.prices[0].currency,
+      store: item.products.prices[0].stores.name,
       quantity: item.quantity,
     }));
   } catch (err) {
@@ -44,6 +47,37 @@ async function deleteShoppingListItem(id) {
     if (!response.ok) throw new Error('Failed to delete item');
     return await response.json();
   } catch (err) {}
+}
+
+const pad = (num) => String(num).padStart(2, '0');
+
+function exportListToFile(event, items) {
+  const date = new Date();
+  const currentDateString = `${date.getFullYear()}-${pad(date.getMonth())}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const formattedDate = currentDateString
+    .replace(/[-:]/g, '')
+    .replace(' ', '_');
+
+  const el = event.target;
+  let totalPrice = 0;
+  let content = '';
+
+  content += `Shopping list created at: ${currentDateString}\n`;
+  content += items
+    .map((item) => {
+      totalPrice += item.quantity * item.price;
+      return `${item.name} - x${item.quantity} \t= ${item.quantity * item.price} ${item.currency} \n`;
+    })
+    .join('');
+  content += '\t  Total: ' + totalPrice + ' HUF';
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  el.href = url;
+  el.download = `shopping-list-${formattedDate}.txt`;
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 export default function ShoppingList({
@@ -81,7 +115,7 @@ export default function ShoppingList({
   };
 
   return (
-    <a
+    <span
       className={`group fixed bottom-5 right-5 inline-block aspect-square rounded bg-white p-1`}
     >
       <ScrollText size={40} />
@@ -119,6 +153,16 @@ export default function ShoppingList({
                     )) || <span>Shopping list is empty!</span>}
                 </AnimatePresence>
               </ul>
+              {!!items?.length && (
+                <div className='mt-5 flex justify-center'>
+                  <a
+                    className='rounded bg-secondary p-2 cursor-pointer text-white transition hover:bg-primary'
+                    onClick={(e) => exportListToFile(e, items)}
+                  >
+                    Export shopping list to text file
+                  </a>
+                </div>
+              )}
             </>
           )) || (
             <h2 className='text-xl text-red-500'>
@@ -127,6 +171,6 @@ export default function ShoppingList({
           )}
         </div>
       </div>
-    </a>
+    </span>
   );
 }
