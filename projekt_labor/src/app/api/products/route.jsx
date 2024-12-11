@@ -12,6 +12,9 @@ export async function GET(request) {
           include: {
             stores: true,
           },
+          orderBy: {
+            id: 'desc',
+          },
         },
       },
     };
@@ -47,6 +50,69 @@ export async function POST(request) {
   try {
     const json = await request.json();
 
+    const existingProduct = await prisma.products.findFirst({
+      where: {
+        name: {
+          equals: json.product_name,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        prices: {
+          include: {
+            stores: true,
+          },
+          orderBy: {
+            id: 'desc',
+          },
+        },
+      },
+    });
+
+    if (existingProduct) {
+      const priceData = {
+        product_id: existingProduct.id,
+        user_id: json.user.id,
+        price: json.price,
+        currency: 'HUF',
+        store_id: json.store_id,
+      };
+
+      const updatedProduct = await prisma.products.update({
+        where: {
+          id: existingProduct.id,
+        },
+        data: {
+          description: json.description || existingProduct.description,
+          date: json.longDate,
+        },
+        include: {
+          prices: {
+            include: {
+              stores: true,
+            },
+            orderBy: {
+              id: 'desc',
+            },
+          },
+        },
+      });
+
+      const newPrice = await prisma.prices.create({
+        data: priceData,
+        include: {
+          stores: true,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        product: updatedProduct,
+        newPrice: newPrice,
+        message: 'Product updated with new price',
+      });
+    }
+
     const productData = {
       name: json.product_name,
       date: json.longDate,
@@ -55,6 +121,9 @@ export async function POST(request) {
 
     const product = await prisma.products.create({
       data: productData,
+      include: {
+        prices: true,
+      },
     });
 
     const priceData = {
@@ -65,12 +134,28 @@ export async function POST(request) {
       store_id: json.store_id,
     };
 
-    await prisma.prices.create({
+    const price = await prisma.prices.create({
       data: priceData,
+      include: {
+        stores: true,
+      },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      success: true,
+      product: {
+        ...product,
+        prices: [price],
+      },
+      message: 'New product created',
+    });
   } catch (e) {
-    throw Error(e.message);
+    return NextResponse.json(
+      {
+        success: false,
+        error: e.message,
+      },
+      { status: 500 }
+    );
   }
 }
