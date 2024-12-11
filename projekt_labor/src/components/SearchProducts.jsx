@@ -104,7 +104,7 @@ export default function SearchProducts({ setUpdateShoppingList }) {
         <Input
           type="text"
           className="text-lg sm:w-3/5 md:text-xl lg:w-1/3 xl:text-2xl bg-black/20 text-white placeholder:text-white/70 border-0 backdrop-blur-sm"
-          placeholder="Search for some bread by typing"
+          placeholder="Search for some products by typing"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
