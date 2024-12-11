@@ -5,22 +5,32 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
+    const expirationDays = parseInt(searchParams.get('expirationDays')) || 30;
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() - expirationDays);
 
     let queryArgs = {
+      where: {
+        date: {
+          gte: expirationDate
+        }
+      },
       include: {
         prices: {
           include: {
             stores: true,
           },
           orderBy: {
-            id: 'desc',
-          },
+            id: 'desc'
+          }
         },
       },
     };
 
     if (search) {
       queryArgs.where = {
+        ...queryArgs.where,
         OR: [
           {
             name: {
@@ -46,30 +56,42 @@ export async function GET(request) {
   }
 }
 
+
+
 export async function POST(request) {
   try {
     const json = await request.json();
 
+    // Keressük meg, hogy létezik-e már a termék ugyanabban a boltban
     const existingProduct = await prisma.products.findFirst({
       where: {
         name: {
           equals: json.product_name,
-          mode: 'insensitive',
+          mode: 'insensitive'
         },
+        prices: {
+          some: {
+            store_id: json.store_id // Csak akkor találjuk meg, ha ugyanabban a boltban van
+          }
+        }
       },
       include: {
         prices: {
           include: {
-            stores: true,
+            stores: true
           },
           orderBy: {
-            id: 'desc',
+            id: 'desc'
           },
-        },
-      },
+          where: {
+            store_id: json.store_id // Csak az adott bolt árait kérjük le
+          }
+        }
+      }
     });
 
     if (existingProduct) {
+      // Ha létezik a termék ugyanabban a boltban, frissítjük az árát
       const priceData = {
         product_id: existingProduct.id,
         user_id: json.user.id,
@@ -78,41 +100,43 @@ export async function POST(request) {
         store_id: json.store_id,
       };
 
+      // Frissítjük a termék leírását és dátumát is
       const updatedProduct = await prisma.products.update({
         where: {
-          id: existingProduct.id,
+          id: existingProduct.id
         },
         data: {
           description: json.description || existingProduct.description,
-          date: json.longDate,
+          date: json.longDate
         },
         include: {
           prices: {
             include: {
-              stores: true,
+              stores: true
             },
             orderBy: {
-              id: 'desc',
-            },
-          },
-        },
+              id: 'desc'
+            }
+          }
+        }
       });
 
       const newPrice = await prisma.prices.create({
         data: priceData,
         include: {
-          stores: true,
-        },
+          stores: true
+        }
       });
 
-      return NextResponse.json({
+      return NextResponse.json({ 
         success: true,
         product: updatedProduct,
         newPrice: newPrice,
-        message: 'Product updated with new price',
+        message: 'Product updated with new price'
       });
     }
 
+    // Ha nem létezik még a termék az adott boltban, új terméket hozunk létre
     const productData = {
       name: json.product_name,
       date: json.longDate,
@@ -122,8 +146,8 @@ export async function POST(request) {
     const product = await prisma.products.create({
       data: productData,
       include: {
-        prices: true,
-      },
+        prices: true
+      }
     });
 
     const priceData = {
@@ -137,25 +161,23 @@ export async function POST(request) {
     const price = await prisma.prices.create({
       data: priceData,
       include: {
-        stores: true,
-      },
+        stores: true
+      }
     });
 
     return NextResponse.json({
       success: true,
       product: {
         ...product,
-        prices: [price],
+        prices: [price]
       },
-      message: 'New product created',
+      message: 'New product created'
     });
+
   } catch (e) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: e.message,
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: e.message
+    }, { status: 500 });
   }
 }

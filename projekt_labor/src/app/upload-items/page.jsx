@@ -142,7 +142,7 @@ export default function UploadPage() {
   return (
     <main>
       <span className='background-upload' />
-      <div className='grid w-full max-w-sm items-center gap-3 pb-10 bg-primary/75 backdrop-blur-sm shadow-lg'>
+      <div className='grid w-full max-w-sm items-center gap-3 bg-primary/75 pb-10 shadow-lg backdrop-blur-sm'>
         <Label htmlFor='name'>Name *</Label>
         <Input
           type='input'
