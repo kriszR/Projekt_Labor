@@ -25,7 +25,7 @@ const ExpirationFilter = ({ value, onChange }) => {
       </span>
       <Select value={value.toString()} onValueChange={(val) => onChange(parseInt(val))}>
         <SelectTrigger className="w-[140px] bg-black/20 text-white backdrop-blur-sm border-0 hover:bg-black/30">
-          <SelectValue placeholder="Válassz időtartamot" />
+          <SelectValue placeholder="Select period" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

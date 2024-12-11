@@ -62,7 +62,6 @@ export async function POST(request) {
   try {
     const json = await request.json();
 
-    // Keressük meg, hogy létezik-e már a termék ugyanabban a boltban
     const existingProduct = await prisma.products.findFirst({
       where: {
         name: {
@@ -71,7 +70,7 @@ export async function POST(request) {
         },
         prices: {
           some: {
-            store_id: json.store_id // Csak akkor találjuk meg, ha ugyanabban a boltban van
+            store_id: json.store_id 
           }
         }
       },
@@ -84,14 +83,13 @@ export async function POST(request) {
             id: 'desc'
           },
           where: {
-            store_id: json.store_id // Csak az adott bolt árait kérjük le
+            store_id: json.store_id 
           }
         }
       }
     });
 
     if (existingProduct) {
-      // Ha létezik a termék ugyanabban a boltban, frissítjük az árát
       const priceData = {
         product_id: existingProduct.id,
         user_id: json.user.id,
@@ -100,7 +98,6 @@ export async function POST(request) {
         store_id: json.store_id,
       };
 
-      // Frissítjük a termék leírását és dátumát is
       const updatedProduct = await prisma.products.update({
         where: {
           id: existingProduct.id
@@ -136,7 +133,6 @@ export async function POST(request) {
       });
     }
 
-    // Ha nem létezik még a termék az adott boltban, új terméket hozunk létre
     const productData = {
       name: json.product_name,
       date: json.longDate,
