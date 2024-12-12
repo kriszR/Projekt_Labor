@@ -1,62 +1,3 @@
-/*import { Button } from './ui/button';
-import { Plus } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Alert from '@/components/Alert';
-import Loading from '@/components/Loading';
-import { useUser } from './UserContext';
-
-
-
-export default function Product({
-  product_id,
-  name,
-  description,
-  price,
-  store,
-  setUpdateShoppingList,
-}) {
-  const [alert, setAlert] = useState({ message: '', type: '' });
-  const [loading, setLoading] = useState(false);
-  const user = useUser();
-
-  useEffect(() => {
-    setTimeout(() => setAlert({ message: '', type: '' }), 3000);
-  }, [alert, setUpdateShoppingList, loading]);
-
-  return (
-    <div className='w-full px-1 md:w-1/2 lg:w-1/4 shadow-lg'>
-      <div className='relative h-full rounded bg-white p-2'>
-        {alert.message ? (
-          <Alert type={alert.type} message={alert.message} />
-        ) : (
-          <>
-            <h2>Name: {name}</h2>
-            <p>{description}</p>
-            <p>Price: {price}</p>
-            <p>Store: {store}</p>
-            {user?.id && (
-              <Button
-                className='absolute bottom-2 right-2 h-7 bg-green-400 px-2'
-                onClick={async () => {
-                  const success = await AddProductToShoppingList(
-                    product_id,
-                    user?.shoppinglists[0].id,
-                    setAlert,
-                    setLoading
-                  );
-                  if (success) setUpdateShoppingList(true);
-                }}
-              >
-                {loading ? <Loading /> : <Plus size={20} />}
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}*/
-
 import { Button } from './ui/button';
 import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -81,28 +22,24 @@ async function AddProductToShoppingList(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
-        product_id, 
+      body: JSON.stringify({
+        product_id,
         shopping_list_id,
-        store_id 
+        store_id,
       }),
     });
 
     const response = await request.json();
-    
-    // Debug log
-    console.log('Shopping list response:', response);
 
     if (!request.ok) throw Error("Couldn't add product, try again!");
 
     if (response.cheaperOptions) {
       setCheaperOptions(response.cheaperOptions);
     }
-    
+
     setAlert({ message: 'Product added to shopping list!', type: 'success' });
     return true;
   } catch (err) {
-    console.error('Error adding product:', err);
     setAlert({ message: err.message, type: 'error' });
     return false;
   } finally {
@@ -127,7 +64,7 @@ export default function Product({
   const user = useUser();
 
   date = new Date(date);
-  const uploadDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+  const uploadDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   const calculatePriceChange = (storePrices) => {
     if (storePrices.length < 2) return null;
@@ -141,7 +78,7 @@ export default function Product({
     if (cheaperOptions) {
       const timeout = setTimeout(() => {
         setCheaperOptions(null);
-      }, 5000); 
+      }, 5000);
 
       return () => clearTimeout(timeout);
     }
@@ -159,7 +96,10 @@ export default function Product({
 
   useEffect(() => {
     if (!cheaperOptions) {
-      const timeout = setTimeout(() => setAlert({ message: '', type: '' }), 3000);
+      const timeout = setTimeout(
+        () => setAlert({ message: '', type: '' }),
+        3000
+      );
       return () => clearTimeout(timeout);
     }
   }, [alert, setUpdateShoppingList, loading, cheaperOptions]);
@@ -175,7 +115,8 @@ export default function Product({
         ) : (
           <>
             <h2 className='font-bold'>
-              Name: {name} <span className='text-sm float-right'>{uploadDate}</span>
+              Name: {name}{' '}
+              <span className='float-right text-sm'>{uploadDate}</span>
             </h2>
             {description && <p className='text-gray-600'>{description}</p>}
             <p className='my-3'>Store: {store}</p>
@@ -199,30 +140,32 @@ export default function Product({
               ))}
             </div>
 
-            {cheaperOptions && (
+            {(cheaperOptions && (
               <PriceAlert
                 currentPrice={currentPrice}
                 cheaperOptions={cheaperOptions}
               />
-            )}
-
-            {user?.id && (
-              <Button
-                className='bg-maroon absolute bottom-2 right-2 h-7 px-2'
-                onClick={async () => {
-                  const success = await AddProductToShoppingList(
-                    product_id,
-                    user?.shoppinglists[0].id,
-                    storeId,
-                    setAlert,
-                    setLoading,
-                    setCheaperOptions
-                  );
-                  if (success) setUpdateShoppingList(true);
-                }}
-              >
-                {loading ? <Loading /> : <Plus size={20} />}
-              </Button>
+            )) || (
+              <>
+                {user?.id && (
+                  <Button
+                    className='bg-maroon absolute bottom-2 right-2 h-7 px-2'
+                    onClick={async () => {
+                      const success = await AddProductToShoppingList(
+                        product_id,
+                        user?.shoppinglists[0].id,
+                        storeId,
+                        setAlert,
+                        setLoading,
+                        setCheaperOptions
+                      );
+                      if (success) setUpdateShoppingList(true);
+                    }}
+                  >
+                    {loading ? <Loading /> : <Plus size={20} />}
+                  </Button>
+                )}
+              </>
             )}
           </>
         )}

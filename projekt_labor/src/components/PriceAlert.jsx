@@ -4,7 +4,6 @@ import { AlertCircle } from 'lucide-react';
 const PriceAlert = ({ currentPrice, cheaperOptions }) => {
   if (!cheaperOptions || cheaperOptions.length === 0) return null;
 
-  // Sort by price to show the biggest savings first
   const sortedOptions = [...cheaperOptions].sort((a, b) => a.price - b.price);
   const bestOption = sortedOptions[0];
   const savings = currentPrice - bestOption.price;
@@ -25,7 +24,7 @@ const PriceAlert = ({ currentPrice, cheaperOptions }) => {
         
         {sortedOptions.length > 1 && (
           <div className="mt-2 text-sm">
-            <p>További elérhető árak:</p>
+            <p>Available prices:</p>
             <ul className="list-disc pl-4">
               {sortedOptions.slice(1).map((option, index) => (
                 <li key={index}>
