@@ -53,7 +53,7 @@ const pad = (num) => String(num).padStart(2, '0');
 
 function exportListToFile(event, items) {
   const date = new Date();
-  const currentDateString = `${date.getFullYear()}-${pad(date.getMonth())}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const currentDateString = `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   const formattedDate = currentDateString
     .replace(/[-:]/g, '')
     .replace(' ', '_');

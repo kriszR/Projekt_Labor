@@ -109,7 +109,7 @@ export default function Product({
   const user = useUser();
 
   date = new Date(date);
-  const uploadDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+  const uploadDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
 
   const calculatePriceChange = (storePrices) => {
     if (storePrices.length < 2) return null;
