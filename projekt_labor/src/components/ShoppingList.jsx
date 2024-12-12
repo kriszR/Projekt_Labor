@@ -9,6 +9,8 @@ import { useUser } from './UserContext';
 async function getShoppingListItems(shopping_list_id, setLoading) {
   try {
     setLoading(true);
+    console.log('Fetching items for shopping list:', shopping_list_id);
+    
     const response = await fetch(
       `/api/shoppinglistitems?id=${shopping_list_id}`,
       {
@@ -19,7 +21,18 @@ async function getShoppingListItems(shopping_list_id, setLoading) {
       }
     );
 
+    if (!response.ok) {
+      throw new Error('Failed to fetch shopping list items');
+    }
+
     const data = await response.json();
+    console.log('Received shopping list data:', data);
+    
+    if (!Array.isArray(data)) {
+      console.log('Received invalid data format:', data);
+      return [];
+    }
+
     return data.map((item) => ({
       id: item.id,
       name: item.products.name,
@@ -29,6 +42,8 @@ async function getShoppingListItems(shopping_list_id, setLoading) {
       quantity: item.quantity,
     }));
   } catch (err) {
+    console.error('Error fetching shopping list items:', err);
+    return [];
   } finally {
     setLoading(false);
   }
@@ -88,7 +103,7 @@ export default function ShoppingList({
   const [loading, setLoading] = useState(false);
   const user = useUser();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (updateShoppingList) {
       (async () => {
         if (user) {
@@ -101,15 +116,50 @@ export default function ShoppingList({
         }
       })();
     }
+  }, [user, updateShoppingList, setUpdateShoppingList]);*/
+
+  useEffect(() => {
+    console.log('UpdateShoppingList changed:', updateShoppingList); // Debug log
+    
+    if (updateShoppingList) {
+      (async () => {
+        if (user) {
+          console.log('Fetching shopping list items for user:', user?.shoppinglists[0].id); // Debug log
+          const items = await getShoppingListItems(
+            user?.shoppinglists[0].id,
+            setLoading
+          );
+          console.log('Fetched items:', items); // Debug log
+          setItems(items);
+          setUpdateShoppingList(false);
+        }
+      })();
+    }
   }, [user, updateShoppingList, setUpdateShoppingList]);
 
   const handleDelete = async (id) => {
-    const remainingItems = items.filter((item) => item.id !== id);
-    setItems(remainingItems);
-
-    const response = await deleteShoppingListItem(id);
-
-    if (!response) {
+    try {
+      console.log('Deleting item:', id); // Debug log
+      
+      const response = await fetch('/api/shoppinglistitems', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete item');
+      }
+  
+      // Sikeres törlés után frissítjük a listát
+      const remainingItems = items.filter((item) => item.id !== id);
+      setItems(remainingItems);
+  
+    } catch (err) {
+      console.error('Error deleting item:', err);
+      // Hiba esetén visszaállítjuk az eredeti listát
       setItems(items);
     }
   };
