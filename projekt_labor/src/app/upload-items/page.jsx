@@ -145,6 +145,7 @@ export default function UploadPage() {
       <div className='grid w-full max-w-sm items-center gap-3 bg-white/50 pb-10 shadow-lg backdrop-blur-sm'>
         <Label htmlFor='name'>Name *</Label>
         <Input
+          autocomplete='one-time-code'
           type='input'
           id='name'
           className='placeholder:text-secondary'
@@ -155,6 +156,7 @@ export default function UploadPage() {
 
         <Label htmlFor='description'>Description (type, quantity)</Label>
         <Input
+          autocomplete='one-time-code'
           type='input'
           id='description'
           className='placeholder:text-secondary'
@@ -163,7 +165,9 @@ export default function UploadPage() {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Label htmlFor='price'>Price * (total price or unit price eg. 1 kg, 1 l, 1 pack, 1 piece)</Label>
+        <Label htmlFor='price'>
+          Price * (total price or unit price eg. 1 kg, 1 l, 1 pack, 1 piece)
+        </Label>
         <div>
           <Input
             type='number'

@@ -17,11 +17,11 @@
     @apply relative min-h-screen pb-7;
 
     > span.background-home {
-      @apply absolute inset-0 bg-[url('/images/shopping_background.jpg')] bg-cover bg-center -z-10 opacity-60;
+      @apply fixed inset-0 bg-[url('/images/shopping_background.jpg')] bg-cover bg-center -z-10 opacity-60;
     }
 
     > span.background-upload {
-      @apply absolute inset-0 bg-[url('/images/upload_background.jpg')] bg-cover bg-center -z-10 opacity-60;
+      @apply fixed inset-0 bg-[url('/images/upload_background.jpg')] bg-cover bg-center -z-10 opacity-60;
     }
 
     > div {
