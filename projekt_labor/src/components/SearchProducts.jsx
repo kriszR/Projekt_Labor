@@ -41,8 +41,8 @@ async function searchProducts(
     const products = await response.json();
 
     if (!products.length) throw Error('No Products were found!');
-    setSortBy('');
-    setSortedProducts([]);
+    setSortBy('latest');
+    setSortedProducts(products.reverse());
     setProducts(products);
 
     setAlert({ message: '', type: '' });
@@ -60,7 +60,7 @@ export default function SearchProducts({ setUpdateShoppingList }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState('latest');
   const [expirationDays, setExpirationDays] = useState(30);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function SearchProducts({ setUpdateShoppingList }) {
       if (value === 'desc') {
         sorted.sort((a, b) => b.prices[0].price - a.prices[0].price);
       }
-      if (value === 'latest') {
+      if (value === 'oldest') {
         sorted = sorted.reverse();
       }
       setSortedProducts(sorted);
@@ -100,29 +100,32 @@ export default function SearchProducts({ setUpdateShoppingList }) {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-y-5">
+      <div className='text-maroon flex flex-col items-center gap-y-5'>
         <Input
-          type="text"
-          className="text-lg sm:w-3/5 md:text-xl lg:w-1/3 xl:text-2xl bg-black/20 text-white placeholder:text-white/70 border-0 backdrop-blur-sm"
-          placeholder="Search for some products by typing"
+          type='text'
+          className='placeholder:text-maroon border-0 bg-white/50 text-lg shadow-lg backdrop-blur-sm sm:w-3/5 md:text-xl lg:w-1/3 xl:text-2xl'
+          placeholder='Search for some products by typing'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <ExpirationFilter value={expirationDays} onChange={setExpirationDays} />
 
-          <div className="flex items-center gap-2">
+        <div className='flex flex-wrap items-center justify-center gap-4'>
+          <ExpirationFilter
+            value={expirationDays}
+            onChange={setExpirationDays}
+          />
+
+          <div className='flex items-center gap-4'>
             <Select onValueChange={handleSort} value={sortBy}>
-              <SelectTrigger className="w-[140px] bg-black/20 text-white backdrop-blur-sm border-0 hover:bg-black/30">
-                <SelectValue placeholder="Sort By" />
+              <SelectTrigger className='w-[140px] border-0 bg-white/50 shadow-lg backdrop-blur-sm hover:bg-white/30'>
+                <SelectValue placeholder='Sort by' />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="oldest">Oldest first</SelectItem>
-                  <SelectItem value="latest">Latest first</SelectItem>
-                  <SelectItem value="asc">Lowest price first</SelectItem>
-                  <SelectItem value="desc">Highest price first</SelectItem>
+                  <SelectItem value='latest'>Latest first</SelectItem>
+                  <SelectItem value='oldest'>Oldest first</SelectItem>
+                  <SelectItem value='asc'>Lowest price first</SelectItem>
+                  <SelectItem value='desc'>Highest price first</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -131,8 +134,11 @@ export default function SearchProducts({ setUpdateShoppingList }) {
       </div>
 
       <div>
-        {loading && <Loading message="Loading, please wait" />}
-        {alert.message && <Alert type={alert.type} message={alert.message} />}
+        {(loading && <Loading message='Loading, please wait' className='text-maroon' />) ||
+          (alert.message && (
+            <Alert type={alert.type} message={alert.message} />
+          ))}
+
         {!loading && !alert.message && (
           <ProductsContainer
             products={sortedProducts.length ? sortedProducts : products}

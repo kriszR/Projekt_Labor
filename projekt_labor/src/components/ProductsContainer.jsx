@@ -16,6 +16,7 @@ export default function ProductsContainer({ products, setUpdateShoppingList }) {
                     ? product.description
                     : ''
                 }
+                date={product.date}
                 prices={product.prices} 
                 store={product.prices[0].stores.name}
                 setUpdateShoppingList={setUpdateShoppingList}

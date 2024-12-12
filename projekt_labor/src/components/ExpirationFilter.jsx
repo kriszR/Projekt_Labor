@@ -19,12 +19,12 @@ const ExpirationFilter = ({ value, onChange }) => {
   ];
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-semibold text-white bg-primary/75 px-2 py-1 rounded backdrop-blur-sm">
+    <div className="flex items-center gap-4">
+      <span className="text-sm font-semibold bg-primary/75 px-2 py-1 rounded backdrop-blur-sm">
         Filter products:
       </span>
       <Select value={value.toString()} onValueChange={(val) => onChange(parseInt(val))}>
-        <SelectTrigger className="w-[140px] bg-black/20 text-white backdrop-blur-sm border-0 hover:bg-black/30">
+        <SelectTrigger className="w-[140px] bg-white/50 backdrop-blur-sm border-0 hover:bg-white/30 shadow-lg">
           <SelectValue placeholder="Select period" />
         </SelectTrigger>
         <SelectContent>

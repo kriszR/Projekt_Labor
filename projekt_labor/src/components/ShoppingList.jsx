@@ -66,10 +66,10 @@ function exportListToFile(event, items) {
   content += items
     .map((item) => {
       totalPrice += item.quantity * item.price;
-      return `${item.name} - x${item.quantity} \t= ${item.quantity * item.price} ${item.currency} \n`;
+      return `${item.name} - x${item.quantity} -- ${item.store}  \t= ${item.quantity * item.price} ${item.currency} \n`;
     })
     .join('');
-  content += '\t  Total: ' + totalPrice + ' HUF';
+  content += '\t\t   Total: ' + totalPrice + ' HUF';
 
   const blob = new Blob([content], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
@@ -116,7 +116,7 @@ export default function ShoppingList({
 
   return (
     <span
-      className={`group fixed bottom-5 right-5 inline-block aspect-square rounded bg-white p-1`}
+      className={`group fixed bottom-7 right-5 inline-block aspect-square rounded bg-white p-1`}
     >
       <ScrollText size={40} />
       <div
@@ -140,6 +140,7 @@ export default function ShoppingList({
                         className='flex justify-between py-2'
                       >
                         {item.name} x{item.quantity}
+                        <span className='ml-auto mr-20'>{item.store}</span>
                         <button
                           className='align-bottom'
                           onClick={() => handleDelete(item.id)}
@@ -156,10 +157,10 @@ export default function ShoppingList({
               {!!items?.length && (
                 <div className='mt-5 flex justify-center'>
                   <a
-                    className='rounded bg-secondary p-2 cursor-pointer text-white transition hover:bg-primary'
+                    className='cursor-pointer rounded bg-secondary p-2 font-bold text-primary transition hover:bg-primary hover:text-secondary'
                     onClick={(e) => exportListToFile(e, items)}
                   >
-                    Export shopping list to text file
+                    Export shopping list
                   </a>
                 </div>
               )}

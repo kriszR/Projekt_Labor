@@ -10,11 +10,11 @@
 
 @layer base {
   body {
-    @apply bg-primary text-secondary;
+    @apply bg-black/60 text-secondary;
   }
 
   main {
-    @apply relative min-h-screen ;
+    @apply relative min-h-screen pb-7;
 
     > span.background-home {
       @apply absolute inset-0 bg-[url('/images/shopping_background.jpg')] bg-cover bg-center -z-10 opacity-60;

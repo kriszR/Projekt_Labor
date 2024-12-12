@@ -142,26 +142,28 @@ export default function UploadPage() {
   return (
     <main>
       <span className='background-upload' />
-      <div className='grid w-full max-w-sm items-center gap-3 bg-primary/75 pb-10 shadow-lg backdrop-blur-sm'>
+      <div className='grid w-full max-w-sm items-center gap-3 bg-white/50 pb-10 shadow-lg backdrop-blur-sm'>
         <Label htmlFor='name'>Name *</Label>
         <Input
           type='input'
           id='name'
+          className='placeholder:text-secondary'
           placeholder='Name'
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
-        <Label htmlFor='description'>Description</Label>
+        <Label htmlFor='description'>Description (type, quantity)</Label>
         <Input
           type='input'
           id='description'
+          className='placeholder:text-secondary'
           placeholder='Description'
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Label htmlFor='price'>Price *</Label>
+        <Label htmlFor='price'>Price * (total price or unit price eg. 1 kg, 1 l, 1 pack, 1 piece)</Label>
         <div>
           <Input
             type='number'
