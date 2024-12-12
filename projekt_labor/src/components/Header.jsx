@@ -32,7 +32,7 @@ export default function Header() {
           <Link href={'/'}>
             <CartSVG
               className={
-                'w-14 fill-slate-200 transition hover:fill-primary lg:w-20'
+                'w-14 fill-primary transition hover:fill-primary-hover lg:w-20'
               }
             />
           </Link>

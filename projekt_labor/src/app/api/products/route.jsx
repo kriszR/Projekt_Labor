@@ -5,19 +5,32 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
+    const expirationDays = parseInt(searchParams.get('expirationDays')) || 30;
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() - expirationDays);
 
     let queryArgs = {
+      where: {
+        date: {
+          gte: expirationDate
+        }
+      },
       include: {
         prices: {
           include: {
             stores: true,
           },
+          orderBy: {
+            id: 'desc'
+          }
         },
       },
     };
 
     if (search) {
       queryArgs.where = {
+        ...queryArgs.where,
         OR: [
           {
             name: {
@@ -43,9 +56,82 @@ export async function GET(request) {
   }
 }
 
+
+
 export async function POST(request) {
   try {
     const json = await request.json();
+
+    const existingProduct = await prisma.products.findFirst({
+      where: {
+        name: {
+          equals: json.product_name,
+          mode: 'insensitive'
+        },
+        prices: {
+          some: {
+            store_id: json.store_id 
+          }
+        }
+      },
+      include: {
+        prices: {
+          include: {
+            stores: true
+          },
+          orderBy: {
+            id: 'desc'
+          },
+          where: {
+            store_id: json.store_id 
+          }
+        }
+      }
+    });
+
+    if (existingProduct) {
+      const priceData = {
+        product_id: existingProduct.id,
+        user_id: json.user.id,
+        price: json.price,
+        currency: 'HUF',
+        store_id: json.store_id,
+      };
+
+      const updatedProduct = await prisma.products.update({
+        where: {
+          id: existingProduct.id
+        },
+        data: {
+          description: json.description || existingProduct.description,
+          date: json.longDate
+        },
+        include: {
+          prices: {
+            include: {
+              stores: true
+            },
+            orderBy: {
+              id: 'desc'
+            }
+          }
+        }
+      });
+
+      const newPrice = await prisma.prices.create({
+        data: priceData,
+        include: {
+          stores: true
+        }
+      });
+
+      return NextResponse.json({ 
+        success: true,
+        product: updatedProduct,
+        newPrice: newPrice,
+        message: 'Product updated with new price'
+      });
+    }
 
     const productData = {
       name: json.product_name,
@@ -55,6 +141,9 @@ export async function POST(request) {
 
     const product = await prisma.products.create({
       data: productData,
+      include: {
+        prices: true
+      }
     });
 
     const priceData = {
@@ -65,12 +154,26 @@ export async function POST(request) {
       store_id: json.store_id,
     };
 
-    await prisma.prices.create({
+    const price = await prisma.prices.create({
       data: priceData,
+      include: {
+        stores: true
+      }
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      success: true,
+      product: {
+        ...product,
+        prices: [price]
+      },
+      message: 'New product created'
+    });
+
   } catch (e) {
-    throw Error(e.message);
+    return NextResponse.json({
+      success: false,
+      error: e.message
+    }, { status: 500 });
   }
 }

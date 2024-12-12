@@ -13,22 +13,12 @@ export default function ProductsContainer({ products, setUpdateShoppingList }) {
                 name={product.name}
                 description={
                   product.description?.length > 0
-                    ? 'Description: ' + product.description
+                    ? product.description
                     : ''
                 }
-                price={
-                  product.prices.length > 0
-                    ? product.prices[0].price + ' Ft'
-                    : 'N/A'
-                }
-                currency={
-                  product.prices.length > 0 ? product.prices[0].currency : 'N/A'
-                }
-                store={
-                  product.prices[0].stores?.name.length > 0
-                    ? product.prices[0].stores.name
-                    : 'N/A'
-                }
+                date={product.date}
+                prices={product.prices} 
+                store={product.prices[0].stores.name}
                 setUpdateShoppingList={setUpdateShoppingList}
               />
             ))}
