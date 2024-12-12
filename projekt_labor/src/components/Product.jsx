@@ -63,12 +63,15 @@ import { useState, useEffect } from 'react';
 import Alert from '@/components/Alert';
 import Loading from '@/components/Loading';
 import { useUser } from './UserContext';
+import PriceAlert from './PriceAlert';
 
 async function AddProductToShoppingList(
   product_id,
   shopping_list_id,
+  store_id,
   setAlert,
-  setLoading
+  setLoading,
+  setCheaperOptions
 ) {
   try {
     setLoading(true);
@@ -78,14 +81,28 @@ async function AddProductToShoppingList(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ product_id, shopping_list_id }),
+      body: JSON.stringify({ 
+        product_id, 
+        shopping_list_id,
+        store_id 
+      }),
     });
+
+    const response = await request.json();
+    
+    // Debug log
+    console.log('Shopping list response:', response);
 
     if (!request.ok) throw Error("Couldn't add product, try again!");
 
+    if (response.cheaperOptions) {
+      setCheaperOptions(response.cheaperOptions);
+    }
+    
     setAlert({ message: 'Product added to shopping list!', type: 'success' });
     return true;
   } catch (err) {
+    console.error('Error adding product:', err);
     setAlert({ message: err.message, type: 'error' });
     return false;
   } finally {
@@ -106,6 +123,7 @@ export default function Product({
   const [loading, setLoading] = useState(false);
   const [priceChange, setPriceChange] = useState(null);
   const [storePrices, setStorePrices] = useState(null);
+  const [cheaperOptions, setCheaperOptions] = useState(null);
   const user = useUser();
 
   date = new Date(date);
@@ -120,6 +138,16 @@ export default function Product({
   };
 
   useEffect(() => {
+    if (cheaperOptions) {
+      const timeout = setTimeout(() => {
+        setCheaperOptions(null);
+      }, 5000); 
+
+      return () => clearTimeout(timeout);
+    }
+  }, [cheaperOptions]);
+
+  useEffect(() => {
     const storePrices = prices
       .filter((price) => price.stores.name === store)
       .sort((a, b) => b.id - a.id)
@@ -130,17 +158,25 @@ export default function Product({
   }, [store, prices]);
 
   useEffect(() => {
-    setTimeout(() => setAlert({ message: '', type: '' }), 3000);
-  }, [alert, setUpdateShoppingList, loading]);
+    if (!cheaperOptions) {
+      const timeout = setTimeout(() => setAlert({ message: '', type: '' }), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alert, setUpdateShoppingList, loading, cheaperOptions]);
+
+  const currentPrice = storePrices?.[0]?.price;
+  const storeId = storePrices?.[0]?.store_id;
 
   return (
     <div className='w-full px-1 shadow-lg md:w-1/2 lg:w-1/4'>
       <div className='relative flex h-full flex-col rounded bg-white p-2'>
-        {alert.message ? (
+        {alert.message && !cheaperOptions ? (
           <Alert type={alert.type} message={alert.message} />
         ) : (
           <>
-            <h2 className='font-bold'>Name: {name} <span className='text-sm float-right'>{uploadDate}</span></h2>
+            <h2 className='font-bold'>
+              Name: {name} <span className='text-sm float-right'>{uploadDate}</span>
+            </h2>
             {description && <p className='text-gray-600'>{description}</p>}
             <p className='my-3'>Store: {store}</p>
 
@@ -163,6 +199,13 @@ export default function Product({
               ))}
             </div>
 
+            {cheaperOptions && (
+              <PriceAlert
+                currentPrice={currentPrice}
+                cheaperOptions={cheaperOptions}
+              />
+            )}
+
             {user?.id && (
               <Button
                 className='bg-maroon absolute bottom-2 right-2 h-7 px-2'
@@ -170,8 +213,10 @@ export default function Product({
                   const success = await AddProductToShoppingList(
                     product_id,
                     user?.shoppinglists[0].id,
+                    storeId,
                     setAlert,
-                    setLoading
+                    setLoading,
+                    setCheaperOptions
                   );
                   if (success) setUpdateShoppingList(true);
                 }}
